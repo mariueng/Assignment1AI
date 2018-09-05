@@ -51,11 +51,10 @@ public class Grid {
 		double x = w/2, y = w/2;
 		for(int i = 0; i<a; i++) {
 			for(int j = 0; i<a; j++) {
-				//addNewNode and find groundtype etc
-				//make square around x,y and check if collides
-				String g = assignGroundType(x,y);
+				String g = assignGroundType(x,y); //g equals ground type
 				if(!g.equals("SO")) {
 					Node n = new Node(x,y,g);
+					vertices.add(n);
 				}
 				x+=d;
 			}
