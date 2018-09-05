@@ -10,6 +10,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.Locale;
 
 /**
  * This class represents the specifications of a given problem and solution;
@@ -93,6 +94,7 @@ public class ProblemSpec {
 	 *             specifications.
 	 */
 	public void loadProblem(String filename) throws IOException {
+		Locale.setDefault(Locale.US);
 		problemLoaded = false;
 		BufferedReader input = new BufferedReader(new FileReader(filename));
 		String line;
