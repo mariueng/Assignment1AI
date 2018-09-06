@@ -3,6 +3,8 @@ package solution;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.beans.VetoableChangeListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -163,13 +165,26 @@ public class Grid {
 		return distance;
 	}
 	
+	//write grid to txtFile
+	public void writeToFile() throws IOException {
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\gridData.txt");
+		BufferedWriter writer = new BufferedWriter(file);
+		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
+		for(Node n:vertices) {
+			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
+		}
+		writer.close();
+	}
+	
+	
 	
 	//main for testing and debugging
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
 		g.load();
 		g.sampleGrid();	
 		System.out.println(g.vertices);
+		g.writeToFile();
 	}
 	
 	
