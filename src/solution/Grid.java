@@ -2,6 +2,7 @@ package solution;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
+import java.beans.VetoableChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,40 +33,70 @@ public class Grid {
 	
 	//fields
 	private ProblemSpec ps;
-	private double d; //distance between each node
-	private int k; //The k last nodes you need to search for neighborhood
+	private double distance; //distance between each node
+	private int kLastNodes; //The k last nodes you need to search for neighborhood
+	private int maxNodesEachRow;//How many samples for each row/columns
 	private ArrayList<Node> vertices = new ArrayList<>(); //Array to keep nodes
 	private static double w; //length of robot arm
 	
 	//constructor
-	public Grid(double distance, int k) {
-		this.d = distance;
-		this.k = k; 
+	public Grid() {
+		this.distance = 0.1 -(w/2);
+		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 	}
 	
 	
 	//Methods
 	
-	//Method to sample vertices
-	public void sampleGrid() {
-		int a = (int) Math.floor((1-w)/d); //How many samples for each row/columns
-		double x = w/2, y = w/2; 
-		//loop to generate nodes in grid
-		for(int i = 0; i<a; i++) {
-			for(int j = 0; j<a; j++) {
-				String g = assignGroundType(x,y); //g equals ground type
-				if(!g.equals("SO")) { //do not add nodes if they are situated within a static obstacle
-					Node n = new Node(x,y,g); //calls constructor in Node class
-					vertices.add(n); //is added to the collection of nodes
-				}
-				x+=d;
-			}
-			x = w/2; //reset x-value
-			y += d;
-			
-		}
-	}
+    //Method to sample vertices
+    public void sampleGrid() {
+        double x = w/2, y = w/2;
+        //loop to generate nodes in grid
+        for(int i = 0; i<maxNodesEachRow; i++) {
+            for(int j = 0; j<maxNodesEachRow; j++) {
+                String g = assignGroundType(x,y); //g equals ground type
+                Node n = new Node(x,y,g); //calls constructor in Node class
+                assignNeighbours(n, i, j);
+                vertices.add(n); //is added to the collection of nodes
+                x+=distance;
+            }
+            x = w/2; //reset x-value
+            y += distance;
+           
+        }
+        
+    }
+	
 		
+	
+	//Assign neighbours to node n
+	private void assignNeighbours(Node n,int i,int j){
+		if(i==0 && j==0) {
+			return;
+		}
+		if(!(j==0)) {
+			assignLeftNeighbour(n,i,j);
+		}
+		if(!(i==0)) {
+			assignDownNeighbour(n,i,j);
+		}
+		}
+	
+	//assignLeftNeighbo
+	private void assignLeftNeighbour(Node n, int i, int j) {
+		int index = i*maxNodesEachRow + j-1;
+		n.addNeighbour(3, vertices.get(index));
+	}
+	//assignDownNeighbour
+	private void assignDownNeighbour(Node n, int i, int j) {
+		int index = i*maxNodesEachRow+j-maxNodesEachRow;
+		n.addNeighbour(2, vertices.get(index));
+	}
+	
+	
+	
+	
+	
 	//Assign ground type for node
 	private String assignGroundType(double x, double y) {
 		String result = "";
@@ -89,10 +120,9 @@ public class Grid {
 		if(result.equals("")) { //did not intersect -> the node is in free space
 			result+= "FS";
 		}
-
 		return result;
 	}
-		
+	
 	//getters
 	
 	//get number of nodes in Vertices
@@ -108,21 +138,25 @@ public class Grid {
 	
 	//get distance between nodes
 	private double getDistance() {
-		return d;
+		return distance;
 	}
 	
 	//get k
-
-
 	
 	
 	//main for testing and debugging
 	public static void main(String[] args) {
-		Grid g = new Grid(0.1,15);
+		Grid g = new Grid();
 		g.load();
 		g.sampleGrid();
 		System.out.println(g.vertices);
-		System.out.println(g.vertices.get(1).getNeighbours());
+		System.out.println(g.maxNodesEachRow);
+		System.out.println("First node: " + g.vertices.get(0).getNeighbours());
+		System.out.println("Second node: " + g.vertices.get(1).getNeighbours());
+		System.out.println("Third node: " + g.vertices.get(2).getNeighbours());
+		System.out.println("Last node: " + g.vertices.get(99).getNeighbours());
+		
+		
 
 		
 	}

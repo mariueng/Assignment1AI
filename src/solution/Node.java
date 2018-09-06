@@ -24,7 +24,7 @@ public class Node {
 	}
 	
 	// Adds node n as a neighbour to this, and this as a neighbour to n.
-	public void addNeighbours(int i, Node n) {
+	public void addNeighbour(int i, Node n) {
 		this.neighbours.set(i, n);
 		if (i >= 2) {
 			n.neighbours.set(i - 2, this);
@@ -42,12 +42,19 @@ public class Node {
 	public String toString() {
 		return "" + "(" + x + ", " + y + ", " + groundType + ")";
 	}
+	//getters
+	public double getxValue() {
+		return this.x;
+	}
+	public double getyValue() {
+		return this.y;
+	}
 	
 	// Main for debugging purposes.
 	public static void main(String[] args) {
 		Node n = new Node(1, 2, "MO");
 		Node m = new Node(2, 2, "FS");
-		n.addNeighbours(1, m);
+		n.addNeighbour(1, m);
 		System.out.println(n.getNeighbours());
 		System.out.println(m.getNeighbours());
 	}
