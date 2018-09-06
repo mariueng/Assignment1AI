@@ -6,6 +6,8 @@ import java.beans.VetoableChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import com.sun.javafx.geom.Rectangle;
 
@@ -46,7 +48,9 @@ public class Grid {
 	}
 	
 	
-	//Methods
+		/*
+		 * /METHODS
+		 */
 	
     //Method to sample vertices
     public void sampleGrid() {
@@ -58,17 +62,35 @@ public class Grid {
                 Node n = new Node(x,y,g); //calls constructor in Node class
                 assignNeighbours(n, i, j);
                 vertices.add(n); //is added to the collection of nodes
-                x+=distance;
+                x+=distance; //incresing x-value for each node
             }
             x = w/2; //reset x-value
-            y += distance;
+            y += distance; //increasy y-value when starting to sample next row
            
         }
+        deleteSamplesWithinStaticObstacle(); //deleting samples in collision with static obstacles
         
     }
 	
 		
-	
+	//Helping method for deleting samples that has groundtype Static Obstacles
+	private void deleteSamplesWithinStaticObstacle() {
+		ArrayList<Integer> indexesWithSO = new ArrayList<>(); //list for keeping index posistion of Nodes with SO groundtype
+		for(Node n:vertices) {
+			if(n.getGroundType().equals("SO")) {
+				n.removeThisNodeAsANeighbor(); //method in class Node. Secures consistency by remoing edges to nodes with SO
+				indexesWithSO.add(vertices.indexOf(n));
+			}
+		}
+		
+		Collections.reverse(indexesWithSO); //reverese to simplyfe the delete
+		for(Integer i:indexesWithSO) {
+			vertices.remove(vertices.get(i));
+		}
+		
+	}
+
+
 	//Assign neighbours to node n
 	private void assignNeighbours(Node n,int i,int j){
 		if(i==0 && j==0) {
@@ -141,24 +163,13 @@ public class Grid {
 		return distance;
 	}
 	
-	//get k
-	
 	
 	//main for testing and debugging
 	public static void main(String[] args) {
 		Grid g = new Grid();
 		g.load();
-		g.sampleGrid();
+		g.sampleGrid();	
 		System.out.println(g.vertices);
-		System.out.println(g.maxNodesEachRow);
-		System.out.println("First node: " + g.vertices.get(0).getNeighbours());
-		System.out.println("Second node: " + g.vertices.get(1).getNeighbours());
-		System.out.println("Third node: " + g.vertices.get(2).getNeighbours());
-		System.out.println("Last node: " + g.vertices.get(99).getNeighbours());
-		
-		
-
-		
 	}
 	
 	

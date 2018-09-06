@@ -32,6 +32,20 @@ public class Node {
 			n.neighbours.set(i + 2, this);
 		}
 	}
+	//Remove this as a neigbhour from Node n
+	public void removeThisNodeAsANeighbor() {
+		for(int i=0;i<4;i++) {
+			if(!(this.getNeighbours().get(i)==null)) {
+				if(i <2) {
+					this.neighbours.get(i).neighbours.set(i+2, null);
+				}
+				else {
+					this.neighbours.get(i).neighbours.set(i-2, null);
+				}
+			}
+		}
+	}
+	
 	
 	// Returns neighbours.
 	public List<Node> getNeighbours() {
@@ -49,13 +63,22 @@ public class Node {
 	public double getyValue() {
 		return this.y;
 	}
+	public String getGroundType() {
+		return this.groundType;
+	}
 	
 	// Main for debugging purposes.
 	public static void main(String[] args) {
-		Node n = new Node(1, 2, "MO");
+		Node n = new Node(1, 1, "SO");
 		Node m = new Node(2, 2, "FS");
+		Node z = new Node(3,3, "FS");
 		n.addNeighbour(1, m);
-		System.out.println(n.getNeighbours());
+		n.addNeighbour(2, z);
 		System.out.println(m.getNeighbours());
+		System.out.println(z.getNeighbours());
+		n.removeThisNodeAsANeighbor();
+		System.out.println(m.getNeighbours());
+		System.out.println(z.getNeighbours());
+		
 	}
 }
