@@ -45,7 +45,8 @@ public class Grid {
 	
 	//constructor
 	public Grid() {
-		this.distance = 0.1 -(w/2);
+		double t = 0.1; // this value can be changed
+		this.distance = t - (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 	}
 	
@@ -150,18 +151,18 @@ public class Grid {
 	//getters
 	
 	//get number of nodes in Vertices
-	private int getNumberOfSamples() {
+	public int getNumberOfSamples() {
 		return vertices.size();
 
 	}
 	
 	//get length of robot arm
-	private double getLength() {
+	public double getLength() {
 		return w;
 	}
 	
 	//get distance between nodes
-	private double getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 	
