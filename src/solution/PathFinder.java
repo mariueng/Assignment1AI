@@ -42,6 +42,7 @@ public class PathFinder {
 		Node currentNode = initialNode;
 		while(! isFinished) {
 			List<Double> distances = Arrays.asList(bigNumber, bigNumber, bigNumber, bigNumber); 
+			
 			//make a list keeping track on the distances for the neighbour nodes to goal node
 			for(Node n : currentNode.getNeighbours()) {
 				int index = currentNode.getNeighbours().indexOf(n);
@@ -55,11 +56,13 @@ public class PathFinder {
 					}
 				}
 			}
+			//list distances is now filled with the distance all neighbors has to goal node
 			int indexOfnextNodeToVisit = distances.indexOf(Collections.min(distances));
 			currentNode = currentNode.getNeighbours().get(indexOfnextNodeToVisit);
-			if (path.get(path.size() - 2) == currentNode) {
-				moveOutOfCorner(currentNode, getNode(path.size() - 1));
-			}
+			while(path.contains(currentNode)) { //checking that node has not already been visited
+				distances.remove(indexOfnextNodeToVisit);
+				currentNode = currentNode.getNeighbours().get(indexOfnextNodeToVisit);
+				}
 			path.add(currentNode);
 			
 		}
@@ -74,38 +77,7 @@ public class PathFinder {
 		return Math.sqrt(Math.pow(goalX-x,2) + Math.pow(goalY-y, 2));
 	}
 	
-	//Helping Method: procedure when stuck in corner
-	private void moveOutOfCorner(Node currentNode, Node stuckNode) {
-		List<Node> neighbours = currentNode.getNeighbours();
-		int direction = 0;
-		for (int i = 0; i < 4; i++) {
-			if (neighbours.get(i) == stuckNode) {
-				if (i < 2) {
-					direction = i + 2;
-				} else {
-					direction = i - 2;
-				}
-			}
-		}
-		int orthogonalDir = getDirectionOfGoalNode(currentNode, direction);
-		int counter = numberOfStepsWhenStuck;
-		while (counter > 0 ) {
-			Node n = currentNode.getNeighbours().get(direction);
-			path.add(n);
-			counter--;
-			currentNode = n;
-		}
-	}
-	
-	private int getDirectionOfGoalNode(Node n, int dir) {
-		int result = -1;
-		if (n.getxValue() < goalNode.getxValue() && dir == 2) {
-			result = 1;
-		} else if (n.getxValue() < goalNode.getxValue() && dir == 1) {
-			result = 0;
-		}
-		return result;
-	}
+
 	
 	// Getters
 	public Node getNode(int i) {
