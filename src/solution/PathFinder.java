@@ -20,7 +20,8 @@ public class PathFinder {
 	private boolean isFinished = false;
 	private double goalX;
 	private double goalY;
-	
+	private final static double bigNumber = 10000;
+	private static int numberOfStepsWhenStuck = 5;
 	
 	//constructor
 	public PathFinder(Node init, Node goal) {
@@ -37,23 +38,28 @@ public class PathFinder {
 		 */
 	
 	//A* search. Find path
-	private boolean findPath(Node initNode, Node goalNode) {
-		Node currentNode = initNode;
-		while(isFinished==false) {
-			List<Double> distances = Arrays.asList(null, null, null, null); 
+	private boolean findPath() {
+		Node currentNode = initialNode;
+		while(! isFinished) {
+			List<Double> distances = Arrays.asList(bigNumber, bigNumber, bigNumber, bigNumber); 
 			//make a list keeping track on the distances for the neighbour nodes to goal node
-			for(Node n:currentNode.getNeighbours()) {
+			for(Node n : currentNode.getNeighbours()) {
 				int index = currentNode.getNeighbours().indexOf(n);
-				double distance = getDistanceToGoalNode(n);
-				distances.set(index, distance);
-				if(distance==0) {
-					isFinished = true;
-					return true;
+				if (! (n == null)) {
+					double distance = getDistanceToGoalNode(n);
+					distances.set(index, distance);
+					if(distance==0) {
+						isFinished = true;
+						path.add(n);
+						return true;
+					}
 				}
 			}
-
 			int indexOfnextNodeToVisit = distances.indexOf(Collections.min(distances));
 			currentNode = currentNode.getNeighbours().get(indexOfnextNodeToVisit);
+			if (path.get(path.size() - 2) == currentNode) {
+				moveOutOfCorner(currentNode, getNode(path.size() - 1));
+			}
 			path.add(currentNode);
 			
 		}
@@ -69,8 +75,41 @@ public class PathFinder {
 	}
 	
 	//Helping Method: procedure when stuck in corner
-	private void moveOutOfCorner() {
-		
+	private void moveOutOfCorner(Node currentNode, Node stuckNode) {
+		List<Node> neighbours = currentNode.getNeighbours();
+		int direction = 0;
+		for (int i = 0; i < 4; i++) {
+			if (neighbours.get(i) == stuckNode) {
+				if (i < 2) {
+					direction = i + 2;
+				} else {
+					direction = i - 2;
+				}
+			}
+		}
+		int orthogonalDir = getDirectionOfGoalNode(currentNode, direction);
+		int counter = numberOfStepsWhenStuck;
+		while (counter > 0 ) {
+			Node n = currentNode.getNeighbours().get(direction);
+			path.add(n);
+			counter--;
+			currentNode = n;
+		}
+	}
+	
+	private int getDirectionOfGoalNode(Node n, int dir) {
+		int result = -1;
+		if (n.getxValue() < goalNode.getxValue() && dir == 2) {
+			result = 1;
+		} else if (n.getxValue() < goalNode.getxValue() && dir == 1) {
+			result = 0;
+		}
+		return result;
+	}
+	
+	// Getters
+	public Node getNode(int i) {
+		return path.get(i);
 	}
 	
 	//main for testing
@@ -98,6 +137,7 @@ public class PathFinder {
 		i.addNeighbour(2, f);
 		
 		PathFinder p = new PathFinder(a,i);
+		p.findPath();
 		System.out.println(p.path);
 	}
 }
