@@ -1,13 +1,9 @@
 package solution;
 
-import java.nio.file.Path;
-import java.time.chrono.MinguoChronology;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.PriorityQueue;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class PathFinder {
 	
@@ -16,20 +12,24 @@ public class PathFinder {
 	//fields
 	private Node goalNode;
 	private Node initialNode;
-	private ArrayList<Node> path = new ArrayList<>();
+	private ArrayList<Node> path = new ArrayList<>(); //result list, containing all nodes from start to end node
+	private PriorityQueue<Node> open = new PriorityQueue<>(); //contains nodes that are visited but not expanded. Pending nodes.
+	private ArrayList<Node> closed = new ArrayList<>(); //contains nodes that have been visited and also expanded 
 	private boolean isFinished = false;
 	private double goalX;
 	private double goalY;
+	private double startX;
+	private double startY;
 	private final static double bigNumber = 10000;
-	private static int numberOfStepsWhenStuck = 5;
 	
 	//constructor
 	public PathFinder(Node init, Node goal) {
 		this.initialNode = init;
 		this.goalNode = goal;
-		path.add(init);
-		goalX = goal.getxValue();
-		goalY = goal.getyValue();
+		this.goalX = goal.getxValue();
+		this.goalY = goal.getyValue();
+		this.startX = init.getxValue();
+		this.startY = init.getyValue();
 	}
 
 	
@@ -39,44 +39,59 @@ public class PathFinder {
 	
 	//A* search. Find path
 	private boolean findPath() {
-		Node currentNode = initialNode;
-		while(! isFinished) {
-			List<Double> distances = Arrays.asList(bigNumber, bigNumber, bigNumber, bigNumber); 
-			
-			//make a list keeping track on the distances for the neighbour nodes to goal node
-			for(Node n : currentNode.getNeighbours()) {
-				int index = currentNode.getNeighbours().indexOf(n);
-				if (! (n == null)) {
-					double distance = getDistanceToGoalNode(n);
-					distances.set(index, distance);
-					if(distance==0) {
-						isFinished = true;
-						path.add(n);
-						return true;
+		open.add(this.initialNode);
+
+		while(isFinished == false || open.size() > 0) {
+			System.out.println(open);
+			Node currentNode = open.poll();
+			if(currentNode == goalNode) {
+				isFinished = true;
+				System.out.println(goalNode);
+				addParentNodesInPath(currentNode);
+				path.add(initialNode);
+				Collections.reverse(path);
+				
+				System.out.println("Path from " + initialNode + " to " + goalNode + ": " + path);
+			}
+			for(Node neighbour:currentNode.getNeighbours()) {
+				if((!(neighbour==null)) && (!open.contains(neighbour)) && (!closed.contains(neighbour))) {
+					neighbour.setParent(currentNode);
+					neighbour.setGValue(getDistanceFromStartNode(initialNode));
+					neighbour.setHValue(getDistanceToGoalNode(goalNode));
+					if( (!open.contains(neighbour)) && (!(closed.contains(neighbour))) ) {
+						open.add(neighbour);
 					}
 				}
-			}
-			//list distances is now filled with the distance all neighbors has to goal node
-			int indexOfnextNodeToVisit = distances.indexOf(Collections.min(distances));
-			currentNode = currentNode.getNeighbours().get(indexOfnextNodeToVisit);
-			while(path.contains(currentNode)) { //checking that node has not already been visited
-				distances.remove(indexOfnextNodeToVisit);
-				currentNode = currentNode.getNeighbours().get(indexOfnextNodeToVisit);
 				}
-			path.add(currentNode);
-			
+			closed.add(currentNode);
 		}
-		
-		return false;
+		return isFinished;
 	}
+	//addingParentNodes in path
+	private void addParentNodesInPath(Node currentNode) {
+	boolean isComplete = (currentNode.getParentNode() ==null);
+	if(isComplete == false) {
+		path.add(currentNode);
+		addParentNodesInPath(currentNode.getParentNode());
+		}
+	//path.add(initialNode);
+	}
+		
 	
 	//Helping method: Calculate distance to goal
 	private double getDistanceToGoalNode(Node n) {
 		double x = n.getxValue();
 		double y = n.getyValue();
-		return Math.sqrt(Math.pow(goalX-x,2) + Math.pow(goalY-y, 2));
+		n.setHValue(Math.pow(goalX-x,2) + Math.pow(goalY-y, 2));
+		return n.getHValue();
 	}
-	
+	//helping method: calculate distance from start ndoe
+	private double getDistanceFromStartNode(Node n) {
+		double x = n.getxValue();
+		double y = n.getyValue();
+		n.setGValue(Math.pow(startX-x,2) + Math.pow(startY-y, 2));
+		return n.getGValue();
+	}
 
 	
 	// Getters
@@ -107,9 +122,7 @@ public class PathFinder {
 		Node i = new Node(3,3,"FS");
 		i.addNeighbour(3, h);
 		i.addNeighbour(2, f);
-		
-		PathFinder p = new PathFinder(a,i);
+		PathFinder p = new PathFinder(a, i);
 		p.findPath();
-		System.out.println(p.path);
 	}
 }

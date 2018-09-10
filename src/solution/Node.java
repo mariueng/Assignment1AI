@@ -3,13 +3,17 @@ package solution;
 import java.util.Arrays;
 import java.util.List;
 
-public class Node {
+public class Node implements Comparable<Node> {
 	
 	private final double x, y;
 	private String groundType = null;
 	private final static List<String> validGroundTypes = Arrays.asList("MO", "SO", "MB", "FS");
 	// Neighbours are listed as follows: (up, right, down, left).
 	private List<Node> neighbours = Arrays.asList(null, null, null, null);
+	private double gValue; //distance from start node
+	private double hValue; //heuristics: estimated distance to 
+	private Node parentNode;
+	
 	
 	// Constructs a Node with position (x, y) and specified groundType. Run in class Grid.
 	public Node(double x, double y, String groundType) {
@@ -67,6 +71,40 @@ public class Node {
 		return this.groundType;
 	}
 	
+	//Method for comparable interface. Used in class PathFinder in A* search
+	@Override
+	public int compareTo(Node other) {
+		return Double.compare(this.getTotalCost(),	 other.getTotalCost());
+	}
+	
+	//getters used fro calculating distances and comparing nodes to expand
+	public double getTotalCost() { //get total cost for this node
+		return this.gValue + this.hValue;
+	}
+	public double getGValue() { //get distance from start node
+		return this.gValue;
+	}
+	public double getHValue() { //get distance to goal node
+		return this.hValue;
+	}
+	//getParent method used in pathfinder
+	public Node getParentNode() {
+		return this.parentNode;
+	}
+	
+	
+	//setters for estimating totalCost
+	public void setGValue(double i) { // step-distance from start node in path. 
+		this.gValue = i;
+	}
+	public void setHValue(double j) {
+		this.hValue = j;
+	}
+	public void setParent(Node n) {
+		this.parentNode = n;
+	}
+
+	
 	// Main for debugging purposes.
 	public static void main(String[] args) {
 		Node n = new Node(1, 1, "SO");
@@ -81,4 +119,5 @@ public class Node {
 		System.out.println(z.getNeighbours());
 		
 	}
+
 }
