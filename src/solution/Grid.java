@@ -1,20 +1,13 @@
 package solution;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
-import java.beans.VetoableChangeListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
-import com.sun.javafx.geom.Rectangle;
-
 import problem.Box;
-import problem.MovingObstacle;
 import problem.ProblemSpec;
 import problem.StaticObstacle;
 
@@ -38,16 +31,16 @@ public class Grid {
 	//fields
 	private ProblemSpec ps;
 	private double distance; //distance between each node
-	private int kLastNodes; //The k last nodes you need to search for neighborhood
 	private int maxNodesEachRow;//How many samples for each row/columns
 	private ArrayList<Node> vertices = new ArrayList<>(); //Array to keep nodes
 	private static double w; //length of robot arm
 	
 	//constructor
 	public Grid() {
-		double t = 0.1; // this value can be changed
-		this.distance = t - (w/2);
+		load();
+		this.distance = (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
+		sampleGrid();
 	}
 	
 	
@@ -150,6 +143,16 @@ public class Grid {
 	
 	//getters
 	
+	//get nodes in vertices
+	public ArrayList<Node> getVertices() {
+		return this.vertices;
+	}
+	//get problemspec
+	public ProblemSpec getPS() {
+		return this.ps;
+	}
+
+	
 	//get number of nodes in Vertices
 	public int getNumberOfSamples() {
 		return vertices.size();
@@ -182,8 +185,6 @@ public class Grid {
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
-		g.load();
-		g.sampleGrid();	
 		System.out.println(g.vertices);
 		g.writeToFile();
 	}

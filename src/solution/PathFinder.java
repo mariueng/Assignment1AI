@@ -1,5 +1,8 @@
 package solution;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -23,13 +26,15 @@ public class PathFinder {
 	private final static double bigNumber = 10000;
 	
 	//constructor
-	public PathFinder(Node init, Node goal) {
+	public PathFinder(Node init, Node goal) throws IOException {
 		this.initialNode = init;
 		this.goalNode = goal;
 		this.goalX = goal.getxValue();
 		this.goalY = goal.getyValue();
 		this.startX = init.getxValue();
 		this.startY = init.getyValue();
+		findPath();
+		writeToFile();
 	}
 
 	
@@ -96,9 +101,23 @@ public class PathFinder {
 	public Node getNode(int i) {
 		return path.get(i);
 	}
+	@Override
+	public String toString() {
+		return "" + path;
+	}
+	//write grid to txtFile
+	public void writeToFile() throws IOException {
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
+		BufferedWriter writer = new BufferedWriter(file);
+		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
+		for(Node n:path) {
+			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
+		}
+		writer.close();
+	}
 	
 	//main for testing
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Node a = new Node(1, 1, "FS");
 		Node b = new Node(2,1,"FS");
 		b.addNeighbour(3, a);

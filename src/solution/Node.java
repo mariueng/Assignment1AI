@@ -8,8 +8,8 @@ public class Node implements Comparable<Node> {
 	private final double x, y;
 	private String groundType = null;
 	private final static List<String> validGroundTypes = Arrays.asList("MO", "SO", "MB", "FS");
-	// Neighbours are listed as follows: (up, right, down, left).
-	private List<Node> neighbours = Arrays.asList(null, null, null, null);
+	// Neighbours are listed as follows: (up, right, down, left, initial/goalNode, helpingNode).
+	private List<Node> neighbours = Arrays.asList(null, null, null, null, null, null);
 	private double gValue; //distance from start node
 	private double hValue; //heuristics: estimated distance to 
 	private Node parentNode;
@@ -30,7 +30,13 @@ public class Node implements Comparable<Node> {
 	// Adds node n as a neighbour to this, and this as a neighbour to n.
 	public void addNeighbour(int i, Node n) {
 		this.neighbours.set(i, n);
-		if (i >= 2) {
+		if(i == 4) {
+			n.neighbours.set(i, this); //adding initialNode
+		}
+		else if(i==5) {
+			n.neighbours.set(5, this); //adding helping node
+		}
+		else if (i >= 2) {
 			n.neighbours.set(i - 2, this);
 		} else {
 			n.neighbours.set(i + 2, this);
