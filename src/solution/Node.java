@@ -12,6 +12,7 @@ public class Node implements Comparable<Node> {
 	private List<Node> neighbours = Arrays.asList(null, null, null, null, null, null);
 	private double gValue; //distance from start node
 	private double hValue; //heuristics: estimated distance to 
+	private double totalCost;
 	private Node parentNode;
 	
 	
@@ -85,7 +86,7 @@ public class Node implements Comparable<Node> {
 	
 	//getters used fro calculating distances and comparing nodes to expand
 	public double getTotalCost() { //get total cost for this node
-		return this.gValue + this.hValue;
+		return this.totalCost;
 	}
 	public double getGValue() { //get distance from start node
 		return this.gValue;
@@ -105,6 +106,9 @@ public class Node implements Comparable<Node> {
 	}
 	public void setHValue(double j) {
 		this.hValue = j;
+	}
+	public void setTotalCost(double gValue, double hValue) {
+		this.totalCost = gValue + hValue;
 	}
 	public void setParent(Node n) {
 		this.parentNode = n;

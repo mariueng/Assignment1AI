@@ -11,6 +11,7 @@ import java.util.PriorityQueue;
 public class PathFinder {
 	
 	//class for finding a path from one initial node to a goal node. Will be used to find path for every Moving Box
+	//pastebin: https://pastebin.com/Zb5hx7JK
 	
 	//fields
 	private Node goalNode;
@@ -34,7 +35,7 @@ public class PathFinder {
 		this.startX = init.getxValue();
 		this.startY = init.getyValue();
 		findPath();
-		writeToFile();
+		//writeToFile();
 	}
 
 	
@@ -45,31 +46,47 @@ public class PathFinder {
 	//A* search. Find path
 	private ArrayList<Node> findPath() {
 		open.add(this.initialNode);
-
-		while(isFinished == false || open.size() > 0) {
-			Node currentNode = open.poll();
-			if(currentNode == goalNode) {
-				isFinished = true;
-				addParentNodesInPath(currentNode);
-				path.add(initialNode);
-				Collections.reverse(path);
-				
-				System.out.println("Path from " + initialNode + " to " + goalNode + ": " + path);
-				return path;
+		closed.add(this.initialNode);
+		initialNode.setGValue(0);
+		calculateHvalueForNode(initialNode);
+		double hVal = initialNode.getHValue();
+		initialNode.setTotalCost(0, hVal);
+		while(isFinished == false && open.size() > 0) {
+			Node node = open.poll();
+			for(Node neighbor:node.getNeighbours()) {
+				if(neighbor == null) {
+					break;
+				}
+				if(neighbor == goalNode) {
+					isFinished = true;
+					addParentNodesInPath(neighbor);
+	                path.add(initialNode);
+	                Collections.reverse(path);
+	                System.out.println("Path from " + initialNode + " to " + goalNode + ": " + path);
+	                System.out.println(path.size());
+	                return path;
+				}
+				if(closed.contains(neighbor)) {
+					double d = calculateDistanceBetweenTwoNodes(node, neighbor);
+					if(neighbor.getGValue() > node.getGValue()+d) {
+						neighbor.setParent(node);
+						open.add(neighbor);
+						}
+				}
+				calculateGvalueForNode(neighbor);
+				calculateHvalueForNode(neighbor);
+				double g = neighbor.getGValue();
+				double h = neighbor.getHValue();
+				neighbor.setTotalCost(g, h);
+				neighbor.setParent(node);
+				open.add(neighbor);
+			
 			}
-			for(Node neighbour:currentNode.getNeighbours()) {
-				if((!(neighbour==null)) && (!open.contains(neighbour)) && (neighbour.getGroundType().equals("FS")) && (!closed.contains(neighbour))) {
-					neighbour.setParent(currentNode);
-					neighbour.setGValue(getDistanceFromStartNode(initialNode));
-					neighbour.setHValue(getDistanceToGoalNode(goalNode));
-					if( (!open.contains(neighbour)) && (!(closed.contains(neighbour))) ) {
-						open.add(neighbour);
-					}
-				}
-				}
-			closed.add(currentNode);
-		} return path;
+		}
+			return path;
+			
 	}
+
 	//addingParentNodes in path
 	private void addParentNodesInPath(Node currentNode) {
 	boolean isComplete = (currentNode.getParentNode() ==null);
@@ -82,19 +99,21 @@ public class PathFinder {
 		
 	
 	//Helping method: Calculate distance to goal
-	private double getDistanceToGoalNode(Node n) {
+	private void calculateHvalueForNode(Node n) {
 		double x = n.getxValue();
 		double y = n.getyValue();
 		n.setHValue(Math.pow(goalX-x,2) + Math.pow(goalY-y, 2));
-		return n.getHValue();
 	}
 	//helping method: calculate distance from start ndoe
-	private double getDistanceFromStartNode(Node n) {
+	private void calculateGvalueForNode(Node n) {
 		double x = n.getxValue();
 		double y = n.getyValue();
 		n.setGValue(Math.pow(startX-x,2) + Math.pow(startY-y, 2));
-		return n.getGValue();
 	}
+	//calculate distance between two nodes
+		private double calculateDistanceBetweenTwoNodes(Node one, Node two) {
+			return Math.sqrt(Math.pow(one.getxValue()-two.getxValue() , 2) + Math.pow(one.getyValue()-two.getyValue(), 2));
+		}
 
 	
 	// Getters
@@ -141,5 +160,9 @@ public class PathFinder {
 		i.addNeighbour(2, f);
 		PathFinder p = new PathFinder(a, i);
 		p.findPath();
+		System.out.println(a.getTotalCost());
+		System.out.println(b.getTotalCost());
+		System.out.println(b.getHValue());
+
 	}
 }
