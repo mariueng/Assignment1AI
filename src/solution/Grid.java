@@ -38,7 +38,8 @@ public class Grid {
 	//constructor
 	public Grid() {
 		load();
-		this.distance = (w/2);
+		double t = 0.1;
+		this.distance =t- (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();
 	}
@@ -187,6 +188,7 @@ public class Grid {
 		Grid g = new Grid();
 		System.out.println(g.vertices);
 		g.writeToFile();
+		System.out.println(g.vertices.size());
 	}
 	
 	

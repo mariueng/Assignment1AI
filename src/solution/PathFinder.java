@@ -53,8 +53,6 @@ public class PathFinder {
 				addParentNodesInPath(currentNode);
 				path.add(initialNode);
 				Collections.reverse(path);
-				
-				System.out.println("Path from " + initialNode + " to " + goalNode + ": " + path);
 				return path;
 			}
 			for(Node neighbour:currentNode.getNeighbours()) {
@@ -85,7 +83,7 @@ public class PathFinder {
 	private double getDistanceToGoalNode(Node n) {
 		double x = n.getxValue();
 		double y = n.getyValue();
-		n.setHValue(Math.pow(goalX-x,2) + Math.pow(goalY-y, 2));
+		n.setHValue(2*(Math.pow(goalX-x,2) + Math.pow(goalY-y, 2)));
 		return n.getHValue();
 	}
 	//helping method: calculate distance from start ndoe
@@ -101,20 +99,31 @@ public class PathFinder {
 	public Node getNode(int i) {
 		return path.get(i);
 	}
+	
+	//get size of path
+	public int getSizeOfPath() {
+		return path.size();
+	}
+	
+	//tostring
 	@Override
 	public String toString() {
+		// TODO Auto-generated method stub
 		return "" + path;
 	}
-	//write grid to txtFile
-	public void writeToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
-		BufferedWriter writer = new BufferedWriter(file);
-		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
-		for(Node n:path) {
-			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
+	
+	
+	//write path to file
+		public void writeToFile() throws IOException {
+			FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
+			BufferedWriter writer = new BufferedWriter(file);
+			writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
+			for(Node n:path) {
+				writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
+			}
+			writer.close();
 		}
-		writer.close();
-	}
+		
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
@@ -139,7 +148,8 @@ public class PathFinder {
 		Node i = new Node(3,3,"FS");
 		i.addNeighbour(3, h);
 		i.addNeighbour(2, f);
+		
 		PathFinder p = new PathFinder(a, i);
-		p.findPath();
+		System.out.println(p.path);
 	}
 }

@@ -1,17 +1,14 @@
 package solution;
-
-import java.awt.geom.Point2D;
+ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import problem.Box;
+ import problem.Box;
 import sun.security.provider.certpath.Vertex;
-
-public class ObjectPath {
+ public class ObjectPath {
 	
 	//Class for making a path for a given box
 	
@@ -26,11 +23,9 @@ public class ObjectPath {
 	private boolean needHelpingInitNode = true;
 	private boolean needHelpingGoalNode = true;
 	private double maxDistanceToNodeInGrid;
-
-	
+ 	
 	//constructor
-
-	public ObjectPath(int i) throws IOException {
+ 	public ObjectPath(int i) throws IOException {
 		this.grid = new Grid();
 		this.movingBox = grid.getPS().getMovingBoxes().get(i);
 		this.initialNode = getInitialNode(movingBox);
@@ -40,6 +35,8 @@ public class ObjectPath {
 		this.maxDistanceToNodeInGrid = grid.getLength()*0.025*Math.sqrt(2);
 		changeGroundTypeForOldMB();
 		PathFinder pf = new PathFinder(initialNode, goalNode);
+		System.out.println(pf);
+		System.out.println(pf.getSizeOfPath());
 		changeGroundTypeForNewMB();
 		
 	}
@@ -161,5 +158,4 @@ public class ObjectPath {
 		System.out.println("helping goalNode: " + o.helpingGoalNode);
 		
 	}
-
-}
+ }
