@@ -38,23 +38,22 @@ public class PathFinder {
 		 */
 	
 	//A* search. Find path
-	private boolean findPath() {
+	private ArrayList<Node> findPath() {
 		open.add(this.initialNode);
 
 		while(isFinished == false || open.size() > 0) {
-			System.out.println(open);
 			Node currentNode = open.poll();
 			if(currentNode == goalNode) {
 				isFinished = true;
-				System.out.println(goalNode);
 				addParentNodesInPath(currentNode);
 				path.add(initialNode);
 				Collections.reverse(path);
 				
 				System.out.println("Path from " + initialNode + " to " + goalNode + ": " + path);
+				return path;
 			}
 			for(Node neighbour:currentNode.getNeighbours()) {
-				if((!(neighbour==null)) && (!open.contains(neighbour)) && (!closed.contains(neighbour))) {
+				if((!(neighbour==null)) && (!open.contains(neighbour)) && (neighbour.getGroundType().equals("FS")) && (!closed.contains(neighbour))) {
 					neighbour.setParent(currentNode);
 					neighbour.setGValue(getDistanceFromStartNode(initialNode));
 					neighbour.setHValue(getDistanceToGoalNode(goalNode));
@@ -64,8 +63,7 @@ public class PathFinder {
 				}
 				}
 			closed.add(currentNode);
-		}
-		return isFinished;
+		} return path;
 	}
 	//addingParentNodes in path
 	private void addParentNodesInPath(Node currentNode) {
