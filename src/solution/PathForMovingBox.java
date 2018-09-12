@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
- import problem.Box;
-import sun.security.provider.certpath.Vertex;
- public class ObjectPath {
+import problem.Box;
+ public class PathForMovingBox {
 	
 	//Class for making a path for a given box
 	
@@ -17,26 +16,25 @@ import sun.security.provider.certpath.Vertex;
 	private Node helpingInitNode;
 	private Node goalNode;
 	private Node helpingGoalNode;
-	private Map<Box, ArrayList<Node>> pathForObject = new HashMap<Box, ArrayList<Node>>();
+	private Map<Box, ArrayList<Node>> pathForMovingBox = new HashMap<Box, ArrayList<Node>>(); //output from this class
 	private Box movingBox;
 	private Grid grid;
 	private boolean needHelpingInitNode = true;
 	private boolean needHelpingGoalNode = true;
-	private double maxDistanceToNodeInGrid;
+	private ArrayList<Node> path;
  	
 	//constructor
- 	public ObjectPath(int i) throws IOException {
+ 	public PathForMovingBox(int i) throws IOException {
 		this.grid = new Grid();
 		this.movingBox = grid.getPS().getMovingBoxes().get(i);
 		this.initialNode = getInitialNode(movingBox);
 		this.helpingInitNode = makeHelpingInitNode(initialNode);
 		this.goalNode = makeGoalNode(movingBox);
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
-		this.maxDistanceToNodeInGrid = grid.getLength()*0.025*Math.sqrt(2);
-		changeGroundTypeForOldMB();
-		PathFinder pf = new PathFinder(initialNode, goalNode);
-		System.out.println(pf);
-		System.out.println(pf.getSizeOfPath());
+		changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
+		PathFinder pf = new PathFinder(initialNode, goalNode); //find a path from initial node to goalNode
+		path = pf.findPath();
+		pathForMovingBox.put(movingBox, path);
 		changeGroundTypeForNewMB();
 		
 	}
@@ -151,11 +149,7 @@ import sun.security.provider.certpath.Vertex;
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		ObjectPath o = new ObjectPath(0);
-		System.out.println("init: " + o.initialNode);
-		System.out.println("goal:" +o.goalNode);
-		System.out.println("helping initNode: " + o.helpingInitNode);
-		System.out.println("helping goalNode: " + o.helpingGoalNode);
-		
+		PathForMovingBox o = new PathForMovingBox(0);
+		System.out.println("Hei: " + o.pathForMovingBox);
 	}
  }
