@@ -125,10 +125,10 @@ public class PathForRobot {
 		char c;
 		Node first = pathForAllMovingBoxes.get(index).get(0);
 		Node second = pathForAllMovingBoxes.get(index).get(1);
-		if(first.getyValue() > second.getyValue()) {
+		if(first.getyValue() < second.getyValue()) {
 			c = 'u';
 		}
-		else if(first.getxValue() >second.getxValue()) {
+		else if(first.getxValue() > second.getxValue()) {
 			c = 'l';
 		}
 		else if(first.getxValue()<second.getxValue()) {
