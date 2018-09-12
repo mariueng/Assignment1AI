@@ -14,13 +14,13 @@ public class PathForAllMovingBoxes {
 	 */
 	
 	//fields
-	private ArrayList<ArrayList<Node>> pathForAllMovingBoxes = new ArrayList<>();
+	public ArrayList<ArrayList<Node>> pathForAllMovingBoxes = new ArrayList<>();
 	private int numberOfMovingBoxes;
 	private Grid grid;
 	
 	//constructor
-	public PathForAllMovingBoxes() throws IOException {
-		this.grid = new Grid();
+	public PathForAllMovingBoxes(Grid grid) throws IOException {
+		this.grid =grid;
 		numberOfMovingBoxes = grid.getPS().getMovingBoxes().size();
 		for(int i=0; i<numberOfMovingBoxes; i++) {
 			PathForMovingBox p = new PathForMovingBox(i, grid);
@@ -55,8 +55,8 @@ public class PathForAllMovingBoxes {
 	
 	//mainForTesting
 	public static void main(String[] args) throws IOException {
-		PathForAllMovingBoxes p = new PathForAllMovingBoxes();
+		Grid grid = new Grid();
+		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
 		System.out.println(p.getPathForAllMovingBoxes());
-		p.grid.writeToFile();
 	}
 }
