@@ -33,7 +33,7 @@ import problem.Box;
 		changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
 		PathFinder pf = new PathFinder(initialNode, goalNode); //find a path from initial node to goalNode
 		path = pf.findPath();
-		//changeGroundTypeForNewMB();
+		changeGroundTypeForNewMB();
 		//writeToFile();
 		
 	}
@@ -136,12 +136,11 @@ import problem.Box;
 	private void changeGroundTypeForNewMB() {
 		double x = goalNode.getxValue();
 		double y = goalNode.getyValue();
+		double l = grid.getLength()/2;
 		for(Node n:grid.getVertices()) {
-			if(n.getGroundType().equals("FS")) {
-				double distance = calculateDistanceBetweenTwoNodes(n, goalNode);
-				if(distance < grid.getDistance()*2) {
-					n.setGroundType("MB");
-				}
+			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
+			if(distance <=l) {
+				n.setGroundType("MB");
 			}
 		}
 	}
@@ -161,6 +160,11 @@ import problem.Box;
 			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
 		}
 		writer.close();
+	}
+	public static void main(String[] args) throws IOException {
+		Grid g = new Grid();
+		PathForMovingBox p = new PathForMovingBox(0, g);
+		System.out.println(p.path);
 	}
 	
 

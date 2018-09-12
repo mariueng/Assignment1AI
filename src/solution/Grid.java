@@ -187,7 +187,7 @@ public class Grid {
 	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
 		System.out.println(g.vertices);
-		g.writeToFile();
+		//g.writeToFile();
 		System.out.println(g.vertices.size());
 	}
 	
