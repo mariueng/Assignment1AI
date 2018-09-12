@@ -1,11 +1,11 @@
 package solution;
  import java.awt.geom.Point2D;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import problem.Box;
  public class PathForMovingBox {
 	
@@ -16,16 +16,15 @@ import problem.Box;
 	private Node helpingInitNode;
 	private Node goalNode;
 	private Node helpingGoalNode;
-	private Map<Box, ArrayList<Node>> pathForMovingBox = new HashMap<Box, ArrayList<Node>>(); //output from this class
 	private Box movingBox;
 	private Grid grid;
 	private boolean needHelpingInitNode = true;
 	private boolean needHelpingGoalNode = true;
-	private ArrayList<Node> path;
+	private ArrayList<Node> path; //output from this class
  	
 	//constructor
- 	public PathForMovingBox(int i) throws IOException {
-		this.grid = new Grid();
+ 	public PathForMovingBox(int i, Grid grid) throws IOException {
+		this.grid = grid;
 		this.movingBox = grid.getPS().getMovingBoxes().get(i);
 		this.initialNode = getInitialNode(movingBox);
 		this.helpingInitNode = makeHelpingInitNode(initialNode);
@@ -34,8 +33,8 @@ import problem.Box;
 		changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
 		PathFinder pf = new PathFinder(initialNode, goalNode); //find a path from initial node to goalNode
 		path = pf.findPath();
-		pathForMovingBox.put(movingBox, path);
-		changeGroundTypeForNewMB();
+		//changeGroundTypeForNewMB();
+		//writeToFile();
 		
 	}
 	
@@ -63,7 +62,7 @@ import problem.Box;
 	//method for making helping node for the initial node, such that all edges are straight
 	private Node makeHelpingInitNode(Node initialNode) {
 		if(needHelpingInitNode==false) {
-			return this.initialNode;
+			return null;
 		}
 		Node helpingInitNode = null;
 		List<Double> distances = new ArrayList<>();
@@ -133,7 +132,7 @@ import problem.Box;
 			}
 		}
 	}
-	
+	//change groundtype for nodes that lies within the final position of the moving box
 	private void changeGroundTypeForNewMB() {
 		double x = goalNode.getxValue();
 		double y = goalNode.getyValue();
@@ -147,9 +146,22 @@ import problem.Box;
 		}
 	}
 	
-	//main for testing
-	public static void main(String[] args) throws IOException {
-		PathForMovingBox o = new PathForMovingBox(0);
-		System.out.println("Hei: " + o.pathForMovingBox);
+	//getPath. Method used in PathForAllMovingBoxes
+	public ArrayList<Node> getPathForMovingBox(){
+		return this.path;
 	}
+	
+	
+	//write path to file
+	public void writeToFile() throws IOException {
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
+		BufferedWriter writer = new BufferedWriter(file);
+		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
+		for(Node n:path) {
+			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
+		}
+		writer.close();
+	}
+	
+
  }

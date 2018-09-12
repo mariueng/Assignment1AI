@@ -1,7 +1,5 @@
 	package solution;
 	
-	import java.io.BufferedWriter;
-	import java.io.FileWriter;
 	import java.io.IOException;
 	import java.util.ArrayList;
 	import java.util.Collections;
@@ -38,7 +36,6 @@
 			this.goalY = goal.getyValue();
 			this.startX = init.getxValue();
 			this.startY = init.getyValue();
-			//writeToFile();
 		}
 	
 		
@@ -137,44 +134,5 @@
 			return "" + path;
 		}
 		
-		
-		//write path to file
-			public void writeToFile() throws IOException {
-				FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
-				BufferedWriter writer = new BufferedWriter(file);
-				writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
-				for(Node n:path) {
-					writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
-				}
-				writer.close();
-			}
-			
-		
-		//main for testing
-		public static void main(String[] args) throws IOException {
-			Node a = new Node(1, 1, "FS");
-			Node b = new Node(2,1,"FS");
-			b.addNeighbour(3, a);
-			Node c = new Node(3,1, "FS");
-			c.addNeighbour(3, b);
-			Node d = new Node(1,2,"FS");
-			d.addNeighbour(2, a);
-			Node e = new Node(2,2,"MB");
-			e.addNeighbour(3, d);
-			e.addNeighbour(2, b);
-			Node f = new Node(3,2,"FS");
-			f.addNeighbour(3, e);
-			f.addNeighbour(2, c);
-			Node g = new Node(1,3,"FS");
-			g.addNeighbour(2, d);
-			Node h = new Node(2,3,"FS");
-			h.addNeighbour(3, g);
-			h.addNeighbour(2, e);
-			Node i = new Node(3,3,"FS");
-			i.addNeighbour(3, h);
-			i.addNeighbour(2, f);
-			
-			PathFinder p = new PathFinder(a, i);
-		}
 		
 	}
