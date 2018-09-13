@@ -54,6 +54,8 @@ public class PathForAllMovingBoxes {
 	public static void main(String[] args) throws IOException {
 		Grid grid = new Grid();
 		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
-		System.out.println(p.getPathForAllMovingBoxes());
+		for(ArrayList<Node> list:p.getPathForAllMovingBoxes()) {
+			System.out.println(list);
+		}
 	}
 }

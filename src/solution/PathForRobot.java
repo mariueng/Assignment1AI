@@ -20,6 +20,8 @@ public class PathForRobot {
 	private Node helpingStartNode;
 	private boolean needHelpingStartNode = true;
 	private Node goalNode;
+	private Node helpingGoalNode;
+	private boolean needHelpingGoalNode = true;
 	private int index;
 	private ArrayList<ArrayList<Node>> pathForAllMovingBoxes;
 	private Grid grid;
@@ -34,9 +36,10 @@ public class PathForRobot {
 		this.startNode = makeStartNode(x, y);
 		this.helpingStartNode = makeHelpingInitNode(startNode);
 		makeGoalNode();
+		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
 		this.index = i;
-		PathFinder pf = new PathFinder(startNode, goalNode, grid);
-		this.robotPath = pf.findPath();
+		PathFinder pf = new PathFinder(startNode, goalNode, grid); //make PathFinder object
+		this.robotPath = pf.findPath(); //finds a path from startNode to GoalNode
 		
 	}
 	
@@ -87,32 +90,48 @@ public class PathForRobot {
 		if(direction == 'r') {
 			Node n = new Node(x-(grid.getLength()/2), y, "FS");
 			goalNode = n;
-			connectToGrid(goalNode);
 		}
 		else if(direction == 'l') {
 			Node n = new Node(x+(grid.getLength()/2), y, "FS");
 			goalNode = n;
-			connectToGrid(goalNode);
 		}
 		else if(direction == 'u') {
 			Node n = new Node(x, y-(grid.getLength()/2), "FS");
 			goalNode = n;
-			connectToGrid(goalNode);
 		}
 		else if(direction == 'd'){
 			Node n = new Node(x, y+(grid.getLength()/2), "FS");
 			goalNode = n;
-			connectToGrid(goalNode);
 		}
 		
 		
+	}
+	//make a helping node for startNode
+	private Node makeHelpingGoalNode(Node goalNode) {
+		if(needHelpingGoalNode==false) {
+			return null;
+		}
+		Node helpingGoalNode = null;
+		List<Double> distances = new ArrayList<>();
+		for(Node n:grid.getVertices()) {
+			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
+			distances.add(distance);
+		}
+		int index = distances.indexOf(Collections.min(distances));
+		Node closestNeighborToGoalNode = grid.getVertices().get(index); //the node we want to connect to goalNode
+		double y = closestNeighborToGoalNode.getyValue();
+		double x = goalNode.getxValue();
+		helpingGoalNode = new Node(x,y,"FS");
+		helpingGoalNode.addNeighbour(4, goalNode);
+		helpingGoalNode.addNeighbour(5, closestNeighborToGoalNode);
+		return helpingGoalNode;
 	}
 	
 	//connect goalNode to Grid
 	public void connectToGrid(Node n) {
 		List<Double> distances = new ArrayList<>();
 		for(Node node :grid.getVertices()) {
-			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
+			double distance = calculateDistanceBetweenTwoNodes(goalNode, node);
 			distances.add(distance);
 		}
 		int index = distances.indexOf(Collections.min(distances));
@@ -120,7 +139,7 @@ public class PathForRobot {
 		closestNeighborToGoalNode.addNeighbour(5, goalNode);
 	}
 	
-	//calculate what side of the box you want to put your robot
+	//calculate what side of the box you want to put your robot in
 	private char calculateDirection() {
 		char c;
 		Node first = pathForAllMovingBoxes.get(index).get(0);
@@ -142,9 +161,10 @@ public class PathForRobot {
 	
 	//calculate distance between two nodes
 	private double calculateDistanceBetweenTwoNodes(Node one, Node two) {
-		return Math.sqrt(Math.pow(one.getxValue()-two.getxValue() , 2) + Math.pow(one.getyValue()-two.getyValue(), 2));
+		double d =  Math.sqrt(Math.pow(one.getxValue()-two.getxValue() , 2) + Math.pow(one.getyValue()-two.getyValue(), 2));
+		return d;
 	}
-	//write path to file
+
 	//write path to file
 	public void writeToFile() throws IOException {
 		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\robotPathData.txt");

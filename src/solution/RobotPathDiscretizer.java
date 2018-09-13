@@ -109,7 +109,6 @@ public class RobotPathDiscretizer {
 		return discretPathsForRobot;
 	}
 	
-	//writeToFile
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {

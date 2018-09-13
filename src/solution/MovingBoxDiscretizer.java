@@ -72,6 +72,12 @@ public class MovingBoxDiscretizer {
 						resultList.add(point2D);
 					}
 				}
+				Point2D endPoint = new Point2D();
+				double x = nodeList.get(numberOfNodesInNodeList-1).getxValue();
+				double y = nodeList.get(numberOfNodesInNodeList-1).getyValue();
+				endPoint.x =  (float) x;
+				endPoint.y = (float) y;
+				resultList.add(endPoint);
 			}
 			
 			discretPathsForMovingBoxes.add(resultList);
