@@ -5,37 +5,43 @@ import java.util.List;
 
 public class Node implements Comparable<Node> {
 	
+	/**
+	 * Class for making nodes that contribute in the grid discretizing the space
+	 * The nodes have attributes and methods managing their position, their neighbours, and their behavoiur in A* search. 
+	 */
+	
 	private final double x, y;
-	private String groundType = null;
-	private final static List<String> validGroundTypes = Arrays.asList("MO", "SO", "MB", "FS");
+	private String groundType;
 	// Neighbours are listed as follows: (up, right, down, left, initial/goalNode, helpingNode).
 	private List<Node> neighbours = Arrays.asList(null, null, null, null, null, null);
 	private double gValue; //distance from start node
 	private double hValue; //heuristics: estimated distance to 
-	private double totalCost;
 	private Node parentNode;
 	
 	
-	// Constructs a Node with position (x, y) and specified groundType. Run in class Grid.
+	// Constructs a Node with position (x, y) and specified groundType. This constructor is ran in class Grid.
 	public Node(double x, double y, String groundType) {
 		this.x = x;
 		this.y = y;
 		setGroundType(groundType);
 	}
 	
-	// Sets the groundType (after moving object in grid).
+	/*
+	 * Sets the groundType. Ran in class Grid after searhcing the area around the node. 
+	 * Possible groundtypes is: FS, MB, MO, SO
+	 */
 	public void setGroundType(String groundType) {
 		this.groundType = groundType;
 	}
 	
-	// Adds node n as a neighbour to this, and this as a neighbour to n.
+	// Adds node n as a neighbour to this node, and this node as a neighbour to n. Based on index values in the list of vertices
 	public void addNeighbour(int i, Node n) {
 		this.neighbours.set(i, n);
 		if(i == 4) {
-			n.neighbours.set(i, this); //adding initialNode
+			n.neighbours.set(i, this); //index value used when adding initialNode (startNode in a search)
 		}
 		else if(i==5) {
-			n.neighbours.set(5, this); //adding helping node
+			n.neighbours.set(5, this); //adding helping node for the initialNode when doing a search.
 		}
 		else if (i >= 2) {
 			n.neighbours.set(i - 2, this);
@@ -43,7 +49,7 @@ public class Node implements Comparable<Node> {
 			n.neighbours.set(i + 2, this);
 		}
 	}
-	//Remove this as a neigbhour from Node n
+	//Remove this as a neigbhour from Node n. PS: Should also take initialNode and helpingNode into account!
 	public void removeThisNodeAsANeighbor() {
 		for(int i=0;i<4;i++) {
 			if(!(this.getNeighbours().get(i)==null)) {
@@ -112,20 +118,5 @@ public class Node implements Comparable<Node> {
 		this.parentNode = n;
 	}
 
-	
-	// Main for debugging purposes.
-	public static void main(String[] args) {
-		Node n = new Node(1, 1, "SO");
-		Node m = new Node(2, 2, "FS");
-		Node z = new Node(3,3, "FS");
-		n.addNeighbour(1, m);
-		n.addNeighbour(2, z);
-		System.out.println(m.getNeighbours());
-		System.out.println(z.getNeighbours());
-		n.removeThisNodeAsANeighbor();
-		System.out.println(m.getNeighbours());
-		System.out.println(z.getNeighbours());
-		
-	}
 
 }

@@ -31,7 +31,7 @@ import problem.Box;
 		this.goalNode = makeGoalNode(movingBox);
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
 		changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
-		PathFinder pf = new PathFinder(initialNode, goalNode); //find a path from initial node to goalNode
+		PathFinder pf = new PathFinder(initialNode, goalNode, grid); //find a path from initial node to goalNode
 		path = pf.findPath();
 		changeGroundTypeForNewMB();
 		//writeToFile();

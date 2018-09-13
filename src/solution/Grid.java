@@ -12,6 +12,9 @@ import problem.ProblemSpec;
 import problem.StaticObstacle;
 
 public class Grid {
+	/**
+	 * Class for making the grid covering the space. It will run ProblemSpec to know how the space looks like.
+	 */
 	
 	//run problemspec to access lists of moving boxes, moving obstacles etc.
 	public void load() {
@@ -38,7 +41,7 @@ public class Grid {
 	//constructor
 	public Grid() {
 		load();
-		double t = 0.1;
+		double t = 0.1; //this value is somewhat random
 		this.distance =t- (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();

@@ -22,10 +22,12 @@
 		private double goalY;
 		private double startX;
 		private double startY;
+		private Grid grid;
 	
 		
 		//constructor
-		public PathFinder(Node init, Node goal) throws IOException {
+		public PathFinder(Node init, Node goal, Grid grid) throws IOException {
+			this.grid = grid;
 			this.initialNode = init;
 			calculateGvalueForNode(initialNode);
 			calculateHvalueForNode(initialNode);
@@ -74,6 +76,9 @@
 						this.path = addParentNodesInPath(neighbor);
 						path.add(initialNode);
 						Collections.reverse(path);
+						for(Node n:grid.getVertices()) {
+							n.setParent(null); //reverse the parentNode-attribute for all nodes in the grid, st. it will not confuse other searches
+						}
 						return;
 					}
 					neighbor.setParent(node);

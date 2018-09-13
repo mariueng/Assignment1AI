@@ -35,7 +35,7 @@ public class PathForRobot {
 		this.helpingStartNode = makeHelpingInitNode(startNode);
 		makeGoalNode();
 		this.index = i;
-		PathFinder pf = new PathFinder(startNode, goalNode);
+		PathFinder pf = new PathFinder(startNode, goalNode, grid);
 		this.robotPath = pf.findPath();
 		
 	}
@@ -156,6 +156,11 @@ public class PathForRobot {
 		writer.close();
 	}
 	
+	//getPath
+	public ArrayList<Node> getRobotPath(){
+		return this.robotPath;
+	}
+	
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
@@ -163,6 +168,7 @@ public class PathForRobot {
 		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
 		PathForRobot p = new PathForRobot(0, pf.getPathForAllMovingBoxes(),g);
 		System.out.println(p.robotPath);
+		p.writeToFile();
 	}
 
 }

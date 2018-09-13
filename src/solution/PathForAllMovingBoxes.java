@@ -25,9 +25,6 @@ public class PathForAllMovingBoxes {
 		for(int i=0; i<numberOfMovingBoxes; i++) {
 			PathForMovingBox p = new PathForMovingBox(i, grid);
 			pathForAllMovingBoxes.add(p.getPathForMovingBox());
-			for(Node n:grid.getVertices()) {
-				n.setParent(null);
-			}
 		}
 	}
 	
