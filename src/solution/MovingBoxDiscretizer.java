@@ -12,7 +12,7 @@ public class MovingBoxDiscretizer {
 	/**
 	 * Class for discretizing all paths in the arraylist of paths for moving boxes
 	 * Input: ArrayList<ArrayLIst<Nodes>
-	 * Output: ArrayList<ArrayList<Point2D>
+	 * Output: ArrayList<ArrayList<Point2D> discretized points describing path for all moving boxes. 
 	 */
 	
 	//fields
