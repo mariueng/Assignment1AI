@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import problem.Box;
+import problem.ProblemSpec;
  public class PathForMovingBox {
 	
 	//Class for making a path for a given box
@@ -162,7 +163,8 @@ import problem.Box;
 		writer.close();
 	}
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
+		ProblemSpec ps = new ProblemSpec();
+		Grid g = new Grid(ps);
 		PathForMovingBox p = new PathForMovingBox(0, g);
 		System.out.println(p.path);
 	}

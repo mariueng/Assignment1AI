@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import com.sun.javafx.geom.Point2D;
 
+import problem.ProblemSpec;
+
 public class RobotPathDiscretizer {
 	
 	/**
@@ -112,7 +114,8 @@ public class RobotPathDiscretizer {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
+		ProblemSpec ps = new ProblemSpec();
+		Grid g = new Grid(ps);
 		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
 		PathForRobot p = new PathForRobot(0, pf.getPathForAllMovingBoxes(),g);
 		ArrayList<Node> nodePath= p.getRobotPath();

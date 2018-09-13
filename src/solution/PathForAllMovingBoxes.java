@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import problem.ProblemSpec;
+
 public class PathForAllMovingBoxes {
 	
 	/**
@@ -52,7 +54,8 @@ public class PathForAllMovingBoxes {
 	
 	//mainForTesting
 	public static void main(String[] args) throws IOException {
-		Grid grid = new Grid();
+		ProblemSpec ps = new ProblemSpec();
+		Grid grid = new Grid(ps);
 		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
 		for(ArrayList<Node> list:p.getPathForAllMovingBoxes()) {
 			System.out.println(list);

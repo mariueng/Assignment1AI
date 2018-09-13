@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import com.sun.javafx.geom.Point2D;
 
+import problem.ProblemSpec;
+
 public class MovingBoxDiscretizer {
 	
 	/**
@@ -117,7 +119,8 @@ public class MovingBoxDiscretizer {
 	
 	//constructor for testing
 	public static void main(String[] args) throws IOException {
-		Grid grid = new Grid();
+		ProblemSpec ps = new ProblemSpec();
+		Grid grid = new Grid(ps);
 		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
 		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForAllMovingBoxes());
 		for(ArrayList<Point2D> list:d.getDiscretPathsForMovingBoxes()) {

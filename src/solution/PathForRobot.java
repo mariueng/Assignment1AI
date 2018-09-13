@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import problem.ProblemSpec;
+
 public class PathForRobot {
 	
 	/**
@@ -184,7 +186,8 @@ public class PathForRobot {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
+		ProblemSpec ps = new ProblemSpec();
+		Grid g = new Grid(ps);
 		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
 		PathForRobot p = new PathForRobot(0, pf.getPathForAllMovingBoxes(),g);
 		System.out.println(p.robotPath);

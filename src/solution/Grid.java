@@ -16,21 +16,6 @@ public class Grid {
 	 * Class for making the grid covering the space. It will run ProblemSpec to know how the space looks like.
 	 */
 	
-	//run problemspec to access lists of moving boxes, moving obstacles etc.
-	public void load() {
-        ProblemSpec ps = new ProblemSpec();
-        this.ps = ps;
-        try {
-            ps.loadProblem("input1.txt");
-            ps.loadSolution("output1.txt");
-        } catch (IOException e) {
-            System.out.println("IO Exception occured");
-        }
-        System.out.println("Finished loading!");
-        w = ps.getRobotWidth();
-
-    }
-	
 	//fields
 	private ProblemSpec ps;
 	private double distance; //distance between each node
@@ -39,8 +24,9 @@ public class Grid {
 	private static double w; //length of robot arm
 	
 	//constructor
-	public Grid() {
-		load();
+	public Grid(ProblemSpec ps) {
+		this.ps = ps;
+		this.w = ps.getRobotWidth();
 		double t = 0.1; //this value is somewhat random
 		this.distance =t- (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
@@ -188,7 +174,8 @@ public class Grid {
 	
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
+		ProblemSpec ps = new ProblemSpec();
+		Grid g = new Grid(ps);
 		System.out.println(g.vertices);
 		//g.writeToFile();
 		System.out.println(g.vertices.size());
