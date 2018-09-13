@@ -25,6 +25,7 @@ public class PathForRobot {
 	private int index;
 	private ArrayList<ArrayList<Node>> pathForAllMovingBoxes;
 	private Grid grid;
+	private char directionOfRobot;
 	
 	
 	//constructor
@@ -146,15 +147,19 @@ public class PathForRobot {
 		Node second = pathForAllMovingBoxes.get(index).get(1);
 		if(first.getyValue() < second.getyValue()) {
 			c = 'u';
+			this.directionOfRobot = 'f';
 		}
 		else if(first.getxValue() > second.getxValue()) {
 			c = 'l';
+			this.directionOfRobot ='u';
 		}
 		else if(first.getxValue()<second.getxValue()) {
 			c ='r';
+			this.directionOfRobot = 'u';
 		}
 		else {
 			c='d';
+			this.directionOfRobot = 'f';
 		}
 		return c;
 	}
@@ -180,6 +185,11 @@ public class PathForRobot {
 	public ArrayList<Node> getRobotPath(){
 		return this.robotPath;
 	}
+	//getDirectionOfRobot
+	public char getDirectionOfRobot() {
+		return this.directionOfRobot;
+	}
+	
 	
 	
 	//main for testing

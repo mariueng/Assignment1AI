@@ -118,7 +118,7 @@ public class RobotPathDiscretizer {
 		ArrayList<Node> nodePath= p.getRobotPath();
 		RobotPathDiscretizer d = new RobotPathDiscretizer(nodePath);
 		System.out.println(d.robotPath);
-		System.out.println(d.discretPathsForRobot);
+		System.out.println(d.getDiscretPathsForMovingBoxes());
 	}
 
 }
