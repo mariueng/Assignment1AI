@@ -1,8 +1,9 @@
-package solution;
+package problem;
 
 import java.io.IOException;
 
-import problem.ProblemSpec;
+import solution.Solver;
+import tester.Tester;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,7 +11,10 @@ public class Main {
         try {
             ps.loadProblem("input1.txt");
             Solver s = new Solver(ps);
-            ps.loadSolution("output1.txt");
+            Tester t = new Tester(ps);
+            String[] input = {"input1.txt", "random.txt"};
+            t.main(input);
+            ps.loadSolution("random.txt");
         } catch (IOException e) {
             System.out.println("IO Exception occured");
         }

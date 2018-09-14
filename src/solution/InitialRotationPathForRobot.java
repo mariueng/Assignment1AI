@@ -34,7 +34,8 @@ public class InitialRotationPathForRobot {
 	private ArrayList<Double> getPositions(){ //uses class RobotRotator to generate resultList
 		ArrayList<Double> result = new ArrayList<>();
 		RobotRotator rotator = new RobotRotator(initialRotation, goalDirectionOfRobot);
-		return rotator.getOrientationList();
+		result = rotator.getOrientationList();
+		return result;
 		
 	}
 	//get initial value for rotation
@@ -45,10 +46,7 @@ public class InitialRotationPathForRobot {
 	//get the goal direction of the robot
 	
 	private char getGoalDirectionOfRobot() throws IOException {
-		Grid g = new Grid();
-		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-		PathForRobot p = new PathForRobot(index, pf.getPathForAllMovingBoxes(),g);
-		System.out.println(p.getDirectionOfRobot());
+		PathForRobot p = (PathForRobot) Solver.getPathsForRobotBeforeMovingBox().get(index);
 		return p.getDirectionOfRobot();
 	}
 	
@@ -61,8 +59,9 @@ public class InitialRotationPathForRobot {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS(), 0);
+		ProblemSpec ps = new ProblemSpec();
+		Solver solver = new Solver(ps);
+		InitialRotationPathForRobot i = new InitialRotationPathForRobot(solver.getGrid().getPS(), 0);
 		System.out.println(i.getResultList());
 	}
 	

@@ -16,6 +16,19 @@ public class Grid {
 	 * Class for making the grid covering the space. It will run ProblemSpec to know how the space looks like.
 	 */
 	
+	private void load() {
+		 ProblemSpec ps = new ProblemSpec();
+	        try {
+	            ps.loadProblem("input1.txt");
+	            this.ps = ps;
+	            //ps.loadSolution("output1.txt");
+	        } catch (IOException e) {
+	            System.out.println("IO Exception occured");
+	        }
+	        System.out.println("Finished loading!");
+
+	}
+	
 	//fields
 	private ProblemSpec ps;
 	private double distance; //distance between each node
@@ -26,6 +39,16 @@ public class Grid {
 	//constructor
 	public Grid(ProblemSpec ps) {
 		this.ps = ps;
+		this.w = ps.getRobotWidth();
+		double t = 0.1; //this value is somewhat random
+		this.distance =t- (w/2);
+		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
+		sampleGrid();
+	}
+	
+	//constructor for testing purposes
+	public Grid() {
+		load();
 		this.w = ps.getRobotWidth();
 		double t = 0.1; //this value is somewhat random
 		this.distance =t- (w/2);
@@ -49,13 +72,23 @@ public class Grid {
                 assignNeighbours(n, i, j);
                 vertices.add(n); //is added to the collection of nodes
                 x+=distance; //incresing x-value for each node
+                formatNumber(x);
+                
             }
             x = w/2; //reset x-value
             y += distance; //increasy y-value when starting to sample next row
-           
+            formatNumber(x);
+            formatNumber(y);
         }
         deleteSamplesWithinStaticObstacle(); //deleting samples in collision with static obstacles
         
+    }
+    
+    // helper for formatting numbers so that they are pretty
+    private double formatNumber(double number) {
+    	String formatted = String.format("%5.4f", number);
+    	double formattedNumber = Double.parseDouble(formatted);
+    	return formattedNumber;
     }
 	
 		
@@ -159,9 +192,22 @@ public class Grid {
 		return distance;
 	}
 	
+	// toString
+	public String toString() {
+		String result = "";
+		int  max_y = vertices.size() / maxNodesEachRow;
+		for (int i = 0; i < maxNodesEachRow; i++) {
+			for (int j = 0; j < max_y; j++) {
+				result += vertices.get(i + j * maxNodesEachRow) + "\t";
+			}
+			result += "\n";
+		}
+		return result;
+	}
+	
 	//write grid to txtFile
 	public void writeToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\gridData.txt");
+		FileWriter file = new FileWriter("C:\\Users\\mariu\\git\\Assignment1AI\\src\\solution\\gridData.txt");
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
 		for(Node n:vertices) {
@@ -174,9 +220,8 @@ public class Grid {
 	
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		Grid g = new Grid(ps);
-		System.out.println(g.vertices);
+		Grid g = new Grid();
+		System.out.println(g);
 		//g.writeToFile();
 		System.out.println(g.vertices.size());
 	}

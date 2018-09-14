@@ -416,7 +416,6 @@ public class Mover {
 		double w = grid.getLength();
 		Mover mover = new Mover(list, robotPos, rotation, w);
 		mover.nextStep();
-		mover.writeToFile();
 		//System.out.println(mover.resultPathCombined);
 		
 		
