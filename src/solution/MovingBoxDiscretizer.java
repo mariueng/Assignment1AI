@@ -1,9 +1,13 @@
 package solution;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.sun.javafx.geom.Point2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
+
 
 import problem.ProblemSpec;
 
@@ -32,7 +36,7 @@ public class MovingBoxDiscretizer {
 		for(ArrayList<Node> nodeList:nodePaths) {
 			ArrayList<Point2D> resultList = new ArrayList<>();
 			int numberOfNodesInNodeList = nodeList.size();
-			for(int i =0;i<numberOfNodesInNodeList-2;i++) {
+			for(int i =0;i<numberOfNodesInNodeList-1;i++) {
 				Node one = nodeList.get(i);
 				Node two = nodeList.get(i+1);
 				double startX = one.getxValue();
@@ -44,43 +48,33 @@ public class MovingBoxDiscretizer {
 				char direction = calculateDirectionFromNodeToNextNode(one, two);
 				if(direction =='u') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x = (float) startX;
-						point2D.y = (float) (startY+0.001*j);
+					    Point2D point2D = new Point2D.Double(startX,startY+0.001*j);
 						resultList.add(point2D);
 					}
 				}
 				else if(direction =='d') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x = (float) startX;
-						point2D.y = (float) (startY-0.001*j);
+					    Point2D point2D = new Point2D.Double(startX,startY-0.001*j);
 						resultList.add(point2D);
 					}
 				}
 				else if(direction =='l') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x =  (float) (startX-(0.001*j));
-						point2D.y = (float) startY;
+					    Point2D point2D = new Point2D.Double(startX-0.001*j,startY);
 						resultList.add(point2D);
 					}
 				}
 				else if(direction =='r') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x =  (float) (startX+(0.001*j));
-						point2D.y = (float) startY;
+					    Point2D point2D = new Point2D.Double(startX+0.001*j,startY);
 						resultList.add(point2D);
 					}
 				}
-				Point2D endPoint = new Point2D();
-				double x = nodeList.get(numberOfNodesInNodeList-1).getxValue();
-				double y = nodeList.get(numberOfNodesInNodeList-1).getyValue();
-				endPoint.x =  (float) x;
-				endPoint.y = (float) y;
-				resultList.add(endPoint);
 			}
+			double x = nodeList.get(numberOfNodesInNodeList-1).getxValue();
+			double y = nodeList.get(numberOfNodesInNodeList-1).getyValue();
+			Point2D endPoint = new Point2D.Double(x,y);
+			resultList.add(endPoint);
 			
 			discretPathsForMovingBoxes.add(resultList);
 		}
@@ -115,17 +109,24 @@ public class MovingBoxDiscretizer {
 		return discretPathsForMovingBoxes;
 	}
 	
-	//writeToFile
+	//write path
+	public void writeToFile(int i) throws IOException {
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
+		BufferedWriter writer = new BufferedWriter(file);
+		writer.write("X-value" + "\t" +"Y-value" + "\n");
+		for(Point2D point:discretPathsForMovingBoxes.get(i)) {
+			writer.write(point.getX() + "\t" + point.getY()+"\n");
+		}
+		writer.close();
+	}
 	
 	//constructor for testing
 	public static void main(String[] args) throws IOException {
 		ProblemSpec ps = new ProblemSpec();
 		Grid grid = new Grid(ps);
 		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
+		System.out.println(p.getPathForAllMovingBoxes().get(0));
 		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForAllMovingBoxes());
-		for(ArrayList<Point2D> list:d.getDiscretPathsForMovingBoxes()) {
-			System.out.println(list);
-		}
 	}
 
 }
