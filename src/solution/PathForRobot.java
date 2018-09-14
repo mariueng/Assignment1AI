@@ -12,7 +12,7 @@ import problem.ProblemSpec;
 public class PathForRobot {
 	
 	/**
-	 * This class will have input: [initital node (position of center of robot), int i (index of the next movingBox you want to move)]
+	 * This class will have input: [inital x and y coordinate, path for the next moving box you want to move, grid]
 	 * Output should be an ArrayList of Nodes the robot has to pass through in order to reach the moving box
 	 */
 	
@@ -24,23 +24,23 @@ public class PathForRobot {
 	private Node goalNode;
 	private Node helpingGoalNode;
 	private boolean needHelpingGoalNode = true;
-	private int index;
-	private ArrayList<ArrayList<Node>> pathForAllMovingBoxes;
+	private ArrayList<Node> pathForNextMovingBox;
 	private Grid grid;
 	private char directionOfRobot;
 	
+	private double startX;
+	private double startY;
 	
 	//constructor
-	public PathForRobot(int i, ArrayList paths, Grid grid) throws IOException {
+	public PathForRobot(double startX, double startY, ArrayList path, Grid grid) throws IOException {
 		this.grid = grid;
-		this.pathForAllMovingBoxes = paths;
-		double x = grid.getPS().getInitialRobotConfig().getPos().getX();
-		double y = grid.getPS().getInitialRobotConfig().getPos().getY();
+		this.pathForNextMovingBox = path;
+		double x = startX;
+		double y = startY;
 		this.startNode = makeStartNode(x, y);
 		this.helpingStartNode = makeHelpingInitNode(startNode);
 		makeGoalNode();
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
-		this.index = i;
 		PathFinder pf = new PathFinder(startNode, goalNode, grid); //make PathFinder object
 		this.robotPath = pf.findPath(); //finds a path from startNode to GoalNode
 		
@@ -52,13 +52,15 @@ public class PathForRobot {
 	
 	//make a node in the center position of robot
 	private Node makeStartNode(double x, double y) {
+		Node startNode = new Node(x,y,"FS");
+		//check if already exists in grid
 		for(Node n:grid.getVertices()) {
-			if(n.getxValue()==x && n.getyValue()==y) {
+			double distance = calculateDistanceBetweenTwoNodes(startNode, n);
+			if(distance <0.01) {
 				needHelpingStartNode = false;
 				return n;
 			}
 		}
-		Node startNode = new Node(x,y,"FS");
 		return startNode;
 	}
 	
@@ -87,8 +89,9 @@ public class PathForRobot {
 	
 	//make a node at the end position for where the robot should end up
 	private void makeGoalNode() {
-		double x = grid.getPS().getMovingBoxes().get(index).getPos().getX() + grid.getLength()/2;
-		double y = grid.getPS().getMovingBoxes().get(index).getPos().getY() + grid.getLength()/2;
+		double x = pathForNextMovingBox.get(0).getxValue();
+		double y = pathForNextMovingBox.get(0).getyValue();
+		
 		char direction = calculateDirection();
 		if(direction == 'r') {
 			Node n = new Node(x-(grid.getLength()/2), y, "FS");
@@ -145,8 +148,9 @@ public class PathForRobot {
 	//calculate what side of the box you want to put your robot in
 	private char calculateDirection() {
 		char c;
-		Node first = pathForAllMovingBoxes.get(index).get(0);
-		Node second = pathForAllMovingBoxes.get(index).get(1);
+		Node first = pathForNextMovingBox.get(0);
+		Node second = pathForNextMovingBox.get(1);
+		
 		if(first.getyValue() < second.getyValue()) {
 			c = 'u';
 			this.directionOfRobot = 'f';
@@ -196,12 +200,11 @@ public class PathForRobot {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		Grid g = new Grid(ps);
+		Grid g = new Grid();
 		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-		PathForRobot p = new PathForRobot(0, pf.getPathForAllMovingBoxes(),g);
+		ArrayList path = pf.getPathForAllMovingBoxes().get(1);
+		PathForRobot p = new PathForRobot(0.8, 0.75, path , g);
 		System.out.println(p.robotPath);
-		p.writeToFile();
 	}
 
 }

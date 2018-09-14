@@ -3,7 +3,8 @@ package solution;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.sun.javafx.geom.Point2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 
 import problem.ProblemSpec;
 
@@ -31,7 +32,7 @@ public class RobotPathDiscretizer {
 	public ArrayList<Point2D> run(){
 			ArrayList<Point2D> resultList = new ArrayList<>();
 			int numberOfNodesInNodeList = robotPath.size();
-			for(int i =0;i<numberOfNodesInNodeList-2;i++) {
+			for(int i =0;i<numberOfNodesInNodeList-1;i++) {
 				Node one = robotPath.get(i);
 				Node two = robotPath.get(i+1);
 				double startX = one.getxValue();
@@ -39,46 +40,36 @@ public class RobotPathDiscretizer {
 				double goalX = two.getxValue();
 				double goalY = two.getyValue();
 				double distance = calculateDistanceBetweenTwoNodes(one, two);
-				int numberOfSteps = (int) Math.floor(distance/0.001);
+				int numberOfSteps = (int) Math.floor(distance/0.00099);
 				char direction = calculateDirectionFromNodeToNextNode(one, two);
 				if(direction =='u') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x = (float) startX;
-						point2D.y = (float) (startY+0.001*j);
+					    Point2D point2D = new Point2D.Double(startX, startY+0.001*j);
 						resultList.add(point2D);
 					}
 				}
 				else if(direction =='d') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x = (float) startX;
-						point2D.y = (float) (startY-0.001*j);
+					    Point2D point2D = new Point2D.Double(startX, startY-0.001*j);
 						resultList.add(point2D);
 					}
 				}
 				else if(direction =='l') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x =  (float) (startX-(0.001*j));
-						point2D.y = (float) startY;
+					    Point2D point2D = new Point2D.Double(startX-0.001*j,startY);
 						resultList.add(point2D);
 					}
 				}
 				else if(direction =='r') {
 					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D();
-						point2D.x =  (float) (startX+(0.001*j));
-						point2D.y = (float) startY;
+					    Point2D point2D = new Point2D.Double(startX + 0.001*j, startY);
 						resultList.add(point2D);
 					}
 				}
 			}
-			Point2D endPoint = new Point2D();
 			double x = robotPath.get(numberOfNodesInNodeList-1).getxValue();
 			double y = robotPath.get(numberOfNodesInNodeList-1).getyValue();
-			endPoint.x =  (float) x;
-			endPoint.y = (float) y;
+			Point2D endPoint = new Point2D.Double(x,y);
 			resultList.add(endPoint);
 			
 			return resultList;
@@ -114,14 +105,15 @@ public class RobotPathDiscretizer {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		Grid g = new Grid(ps);
+		Grid g = new Grid();
 		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-		PathForRobot p = new PathForRobot(0, pf.getPathForAllMovingBoxes(),g);
+		ArrayList<Node> path = pf.getPathForAllMovingBoxes().get(1);
+		PathForRobot p = new PathForRobot(0.75, 0.8, path, g);
 		ArrayList<Node> nodePath= p.getRobotPath();
 		RobotPathDiscretizer d = new RobotPathDiscretizer(nodePath);
-		System.out.println(d.robotPath);
 		System.out.println(d.getDiscretPathsForMovingBoxes());
+		System.out.println(d.getDiscretPathsForMovingBoxes().get(73));
+		System.out.println(d.getDiscretPathsForMovingBoxes().get(74));
 	}
 
 }

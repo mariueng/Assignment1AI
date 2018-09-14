@@ -394,6 +394,14 @@ public class Mover {
 		return r;
 	}
 	
+	//getters
+	public Point2D getFinalPositionOfRobot() {
+		double x = resultPathCombined.get(-1).get(0);
+		double y = resultPathCombined.get(-1).get(1);
+		Point2D position = new Point2D.Double(x,y);
+		return position;
+	}
+	
 	//write to file
 	public void writeToFile() throws IOException {
 		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");

@@ -4,6 +4,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -86,7 +88,8 @@ public class Grid {
     
     // helper for formatting numbers so that they are pretty
     private double formatNumber(double number) {
-    	String formatted = String.format("%5.4f", number);
+    	NumberFormat formatter = new DecimalFormat("#0.000");
+    	String formatted = formatter.format(number);
     	double formattedNumber = Double.parseDouble(formatted);
     	return formattedNumber;
     }
@@ -207,7 +210,7 @@ public class Grid {
 	
 	//write grid to txtFile
 	public void writeToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\mariu\\git\\Assignment1AI\\src\\solution\\gridData.txt");
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\gridData.txt");
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
 		for(Node n:vertices) {

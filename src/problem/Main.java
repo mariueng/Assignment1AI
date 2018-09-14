@@ -11,10 +11,10 @@ public class Main {
         try {
             ps.loadProblem("input1.txt");
             Solver s = new Solver(ps);
-            Tester t = new Tester(ps);
-            String[] input = {"input1.txt", "random.txt"};
-            t.main(input);
-            ps.loadSolution("random.txt");
+//            Tester t = new Tester(ps);
+//            String[] input = {"input1.txt", "pathData.txt"};
+//            t.main(input);
+            ps.loadSolution("output1.txt");
         } catch (IOException e) {
             System.out.println("IO Exception occured");
         }

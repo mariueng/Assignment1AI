@@ -39,6 +39,24 @@ public class PathForAllMovingBoxes {
 		return pathForAllMovingBoxes;
 	}
 	
+	public char getDirectionOfLastStep(Node first, Node second) {
+		char c;
+		
+		if(first.getyValue() < second.getyValue()) {
+			c = 'u';
+		}
+		else if(first.getxValue() > second.getxValue()) {
+			c = 'l';
+		}
+		else if(first.getxValue()<second.getxValue()) {
+			c ='r';
+		}
+		else {
+			c='d';
+		}
+		return c;
+	}
+	
 	//write all paths to file
 	public void writeToFile() throws IOException {
 		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
