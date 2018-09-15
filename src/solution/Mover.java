@@ -44,7 +44,7 @@ public class Mover {
 	/*
 	 * METHODS
 	 */
-	private void nextStep() {
+	public void nextStep() {
 		for(int i = 0; i<movingBoxOriginalPath.size()-1; i++) {
 			char dirOfNextStep = getDirectionOfNextStep(movingBoxOriginalPath.get(i), movingBoxOriginalPath.get(i+1));
 			char dirOfLastStep = dirOfNextStep;
@@ -89,7 +89,13 @@ public class Mover {
 			
 			//when continuing in the same direction
 			if(dirOfLastStep == dirOfNextStep) {
-				double robotAlpha = resultPathCombined.get(i).get(2); //get alpha from the last step
+				double robotAlpha = -1.0;
+				if(dirOfLastStep=='u' || dirOfLastStep =='d') {
+					robotAlpha = 0.0;
+				}
+				else {
+					robotAlpha = 1.57;
+				}
 				ArrayList<Double> step = new ArrayList<>();
 				step.addAll(Arrays.asList(xRobot, yRobot, robotAlpha, xBox, yBox));
 				resultPathCombined.add(step);
@@ -401,6 +407,9 @@ public class Mover {
 		Point2D position = new Point2D.Double(x,y);
 		return position;
 	}
+	public ArrayList<ArrayList<Double>> getResultList(){
+		return resultPathCombined;
+	}
 	
 	//write to file
 	public void writeToFile() throws IOException {
@@ -424,8 +433,10 @@ public class Mover {
 		double w = grid.getLength();
 		Mover mover = new Mover(list, robotPos, rotation, w);
 		mover.nextStep();
-		//System.out.println(mover.resultPathCombined);
-		
+		System.out.println(mover.resultPathCombined.get(0));
+		System.out.println(mover.resultPathCombined.get(mover.resultPathCombined.size()-1));
+		//for(ArrayList<Double> step: mover.resultPathCombined) {
+			//System.out.println(step);
 		
 		
 		

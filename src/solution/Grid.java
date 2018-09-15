@@ -74,25 +74,24 @@ public class Grid {
                 assignNeighbours(n, i, j);
                 vertices.add(n); //is added to the collection of nodes
                 x+=distance; //incresing x-value for each node
-                formatNumber(x);
+                x = doubleFormatter(x);
                 
             }
             x = w/2; //reset x-value
             y += distance; //increasy y-value when starting to sample next row
-            formatNumber(x);
-            formatNumber(y);
+            y = doubleFormatter(y);;
         }
         deleteSamplesWithinStaticObstacle(); //deleting samples in collision with static obstacles
         
     }
     
-    // helper for formatting numbers so that they are pretty
-    private double formatNumber(double number) {
-    	NumberFormat formatter = new DecimalFormat("#0.000");
-    	String formatted = formatter.format(number);
-    	double formattedNumber = Double.parseDouble(formatted);
-    	return formattedNumber;
-    }
+	//formatter for making pretty numbers
+	public double doubleFormatter(double number) {
+		NumberFormat formatter = new DecimalFormat("#0.000");
+		String formatted = formatter.format(number);
+		double formattedNumber = Double.parseDouble(formatted);
+		return formattedNumber;
+	}
 	
 		
 	//Helping method for deleting samples that has groundtype Static Obstacles
@@ -224,9 +223,8 @@ public class Grid {
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
-		System.out.println(g);
 		//g.writeToFile();
-		System.out.println(g.vertices.size());
+		System.out.println(g.getVertices());
 	}
 	
 	
