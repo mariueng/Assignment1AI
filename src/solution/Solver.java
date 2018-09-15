@@ -3,10 +3,13 @@ package solution;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.awt.geom.Point2D;
+
 
 import problem.ProblemSpec;
 
@@ -27,6 +30,7 @@ public class Solver {
 	
 	private PathForAllMovingBoxes paths;
 	private static ArrayList<PathForRobot> pathsForRobotBeforeMovingBox = new ArrayList<>();
+	public ArrayList<Double> initialRotationValue = new ArrayList<>();
 	
 	//these three list have the same number of elements and contains discretices path in three steps
 	private ArrayList<ArrayList<Double>> resultRobotOrientation = new ArrayList<>();
@@ -47,7 +51,7 @@ public class Solver {
         
         //run
 		run(ps);
-		System.out.println(outPut);
+		writeSolutionToFile();
 	}
 	
 	/**
@@ -93,7 +97,6 @@ public class Solver {
 			moveRobotAndBox(i);
 		}
 
-		//writeSolutionToFile();
 	}
 	
 	
@@ -101,13 +104,68 @@ public class Solver {
 	 * Move robot and box
 	 */
 	private void moveRobotAndBox(int i) {
+		int indexOfLastStep = outPut.size()-1;
+		ArrayList<Double> lastStep = outPut.get(indexOfLastStep);
 		
+		double xRobot = (double) lastStep.get(0);
+		double yRobot = (double) lastStep.get(1);
+		double alpha = (double) lastStep.get(2);
+		Point2D robotPos = new Point2D.Double(xRobot, yRobot);
+		ArrayList<Point2D> boxPath = resultPathForMovingBoxes.get(i);
+		Mover mover = new Mover(boxPath, robotPos, alpha, w);
+		mover.nextStep();
+		ArrayList<ArrayList<Double>> steps = mover.getResultList();
+		int numberOfSteps = steps.size();
+		int indexForXPositionOfBox = (2*i)+3;
+		int indexForYPositionOfBox = (2*i)+4;
+		for(int j=0; j<numberOfSteps; j++) {
+			ArrayList<Double> step = new ArrayList<>();
+			for(double v:lastStep) {
+				step.add(v);
+			}
+			double xR = steps.get(j).get(0);
+			double yR = steps.get(j).get(1);
+			double a = steps.get(j).get(2);
+			double xB = steps.get(j).get(3);
+			double yB = steps.get(j).get(4);
+			step.set(0, xR);
+			step.set(1, yR);
+			step.set(2, a);
+			step.set(indexForXPositionOfBox, xB);
+			step.set(indexForYPositionOfBox, yB);
+			ArrayList<Double> resultStep = new ArrayList<>();
+			for(Double d:step) {
+				double b = doubleFormatter(d);
+				resultStep.add(b);
+			}
+			outPut.add(resultStep);
+		}
 	}
 	
 	/**
 	 * Move robot to box
 	 */
 	private void moveRobotToBox(int i) {
+		int indexOfLastStep = outPut.size()-1;
+		ArrayList<Double> lastStep = outPut.get(indexOfLastStep);
+		ArrayList<Point2D> stepsForMoving = resultMoveRobotForNextBox.get(i);
+		int numberOfSteps = stepsForMoving.size();
+		for(int j = 0; j<numberOfSteps; j++) {
+			ArrayList<Double> step = new ArrayList<>();
+			for(double v:lastStep) {
+				step.add(v);
+			}
+			double x = stepsForMoving.get(j).getX();
+			double y = stepsForMoving.get(j).getY();
+			step.set(0, x);
+			step.set(1, y);
+			ArrayList<Double> resultStep = new ArrayList<>();
+			for(Double d:step) {
+				double b = doubleFormatter(d);
+				resultStep.add(b);
+			}
+			outPut.add(resultStep);
+		}
 		
 	}
 	
@@ -122,10 +180,18 @@ public class Solver {
 		ArrayList<Double> stepsForOrientation = resultRobotOrientation.get(i);
 		int numberOfSteps = stepsForOrientation.size();
 		for(int j = 0; j<numberOfSteps; j++) {
-			ArrayList<Double> step = lastStep;
+			ArrayList<Double> step = new ArrayList<>();
+			for(double v:lastStep) {
+				step.add(v);
+			}
 			double value = stepsForOrientation.get(j);
 			step.set(2, value);
-			writeToFile(step);
+			ArrayList<Double> resultStep = new ArrayList<>();
+			for(Double d:step) {
+				double b = doubleFormatter(d);
+				resultStep.add(b);
+			}
+			outPut.add(resultStep);
 			
 		}
 		
@@ -151,7 +217,8 @@ public class Solver {
 		// list of these discretize objects InitialRotationPathForRobot
 		for (int i = 0; i < resultPathForMovingBoxes.size(); i++) {
 			// get orientations
-			InitialRotationPathForRobot irpr = new InitialRotationPathForRobot(ps, i);
+			double initOrientation = initialRotationValue.get(i);
+			InitialRotationPathForRobot irpr = new InitialRotationPathForRobot(ps, i, initOrientation);
 			// add orientations
 			resultRobotOrientation.add(irpr.getResultList());
 		}
@@ -176,6 +243,7 @@ public class Solver {
 				startX = robotPos.getX();
 				startY = robotPos.getY();
 				tempLastMovingBoxPath = nextMovingBoxpath;
+				initialRotationValue.add(ps.getInitialRobotConfig().getOrientation());
 			} 
 			else {
 				// initial position is ending path for last box the robot moved
@@ -186,18 +254,22 @@ public class Solver {
 				if(dir == 'u') {
 					startX = ps.getMovingBoxEndPositions().get(i-1).getX();
 					startY = ps.getMovingBoxEndPositions().get(i-1).getY()-w/2;
+					initialRotationValue.add(0.0);
 				}
 				else if(dir == 'd') {
 					startX = ps.getMovingBoxEndPositions().get(i-1).getX();
 					startY = ps.getMovingBoxEndPositions().get(i-1).getY()+w/2;
+					initialRotationValue.add(0.0);
 				}
 				else if(dir == 'r') {
 					startX = ps.getMovingBoxEndPositions().get(i-1).getX()-w/2;
 					startY = ps.getMovingBoxEndPositions().get(i-1).getY();
+					initialRotationValue.add(1.57);
 				}
 				else {
 					startX = ps.getMovingBoxEndPositions().get(i-1).getX()+w/2;
 					startY = ps.getMovingBoxEndPositions().get(i-1).getY();
+					initialRotationValue.add(1.57);
 				}
 				tempLastMovingBoxPath = nextMovingBoxpath;
 			}
@@ -242,7 +314,7 @@ public class Solver {
 	}
 	
 	public void writeSolutionToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\output1.txt");
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\output3.txt");
 		int numberOfPrimitiveSteps = outPut.size();
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write(numberOfPrimitiveSteps + "\n");
@@ -266,6 +338,15 @@ public class Solver {
 	// Retrieving discrete paths for robot outside this class
 	public static ArrayList<ArrayList<Point2D>> getDiscPathsForRobotBeforeMovingBox() {
 		return resultMoveRobotForNextBox;
+	}
+	
+	
+	//formatter for making pretty numbers
+	public double doubleFormatter(double number) {
+		NumberFormat formatter = new DecimalFormat("#0.000");
+		String formatted = formatter.format(number);
+		double formattedNumber = Double.parseDouble(formatted);
+		return formattedNumber;
 	}
 	
 	// Retrieving paths for robot as PathForRobot objects outside this class

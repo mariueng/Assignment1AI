@@ -26,12 +26,12 @@ public class RobotRotator {
 	private ArrayList<Double> run(){
 		ArrayList<Double> list = new ArrayList<>();
 		if(goalDirectionOfRobot =='u') {
-			for(Double i = initialRotation; i<1.571; i+=0.001) {
+			for(Double i = initialRotation; i<1.571; i+=0.01) {
 			list.add(i);
 			}
 		}
 		else {
-			for(Double i = initialRotation; i>0;i-=0.001) {
+			for(Double i = initialRotation; i>0;i-=0.01) {
 				list.add(i);
 			}
 		}

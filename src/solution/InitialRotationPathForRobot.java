@@ -20,10 +20,10 @@ public class InitialRotationPathForRobot {
 	private ProblemSpec ps;
 	
 	//constructor
-	public InitialRotationPathForRobot(ProblemSpec ps, int i) throws IOException {
+	public InitialRotationPathForRobot(ProblemSpec ps, int i, double initialRotation) throws IOException {
 		this.ps = ps;
 		this.index = i;
-		this.initialRotation = getInitialRotation();
+		this.initialRotation = initialRotation;
 		this.goalDirectionOfRobot = getGoalDirectionOfRobot();
 		this.resultList = getPositions();
 	}
@@ -59,9 +59,8 @@ public class InitialRotationPathForRobot {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		Solver solver = new Solver(ps);
-		InitialRotationPathForRobot i = new InitialRotationPathForRobot(solver.getGrid().getPS(), 0);
+		Grid g = new Grid();
+		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS(), 0, 0.2);
 		System.out.println(i.getResultList());
 	}
 	
