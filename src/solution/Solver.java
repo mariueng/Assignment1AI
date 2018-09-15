@@ -3,6 +3,8 @@ package solution;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -33,7 +35,7 @@ public class Solver {
 	private ArrayList<ArrayList<Point2D>> resultPathForMovingBoxes = new ArrayList<>();
 	private static ArrayList<ArrayList<Point2D>> resultMoveRobotForNextBox = new ArrayList<>();
 	
-	private ArrayList<ArrayList<Double>> outPut = new ArrayList<>();
+	private ArrayList<ArrayList<Double>> outPut = new ArrayList<ArrayList<Double>>();
 	
 	//constructor
 	public Solver(ProblemSpec ps) throws IOException {
@@ -47,7 +49,7 @@ public class Solver {
         
         //run
 		run(ps);
-		System.out.println(outPut);
+		writeSolutionToFile();
 	}
 	
 	/**
@@ -122,15 +124,25 @@ public class Solver {
 		ArrayList<Double> stepsForOrientation = resultRobotOrientation.get(i);
 		int numberOfSteps = stepsForOrientation.size();
 		for(int j = 0; j<numberOfSteps; j++) {
-			ArrayList<Double> step = lastStep;
+			ArrayList<Double> step = new ArrayList<>();
+			for(Double v:lastStep) {
+				step.add(v);
+			}
 			double value = stepsForOrientation.get(j);
-			step.set(2, value);
-			writeToFile(step);
+			step.set(2, formatNumber(value));
 			
+			outPut.add(step);
 		}
-		
-		
+		System.out.println(outPut);
 	}
+	
+	// helper for formatting numbers so that they are pretty
+    private double formatNumber(double number) {
+    	NumberFormat formatter = new DecimalFormat("#0.000");
+    	String formatted = formatter.format(number);
+    	double formattedNumber = Double.parseDouble(formatted);
+    	return formattedNumber;
+    }
 
 	/**
 	 * Make grid
@@ -231,7 +243,7 @@ public class Solver {
 	 * writeSolutionToFile
 	 */
 	public void writeToFile(ArrayList<Double> step) throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
+		FileWriter file = new FileWriter("C:\\Users\\mariu\\git\\Assignment1AI\\src\\solution\\pathData.txt");
 		numberOfPrimitives ++;
 		BufferedWriter writer = new BufferedWriter(file);
 		for(Double value: step ) {
@@ -242,12 +254,12 @@ public class Solver {
 	}
 	
 	public void writeSolutionToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\output1.txt");
+		FileWriter file = new FileWriter("C:\\Users\\mariu\\git\\Assignment1AI\\output1.txt");
 		int numberOfPrimitiveSteps = outPut.size();
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write(numberOfPrimitiveSteps + "\n");
 		for(ArrayList<Double> step : outPut ) {
-			for(Double value:step) {
+			for(Double value : step) {
 				writer.write(value + "\t");
 			}
 			writer.write("\n");
