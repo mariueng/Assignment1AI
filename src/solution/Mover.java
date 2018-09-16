@@ -424,21 +424,21 @@ public class Mover {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		Grid grid = new Grid();
-		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
-		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForAllMovingBoxes());
-		ArrayList<Point2D> list = d.getDiscretPathsForMovingBoxes().get(0);
-		Point2D robotPos = new Point2D.Double(0.125,0.15);
-		double rotation = 1.57;
-		double w = grid.getLength();
-		Mover mover = new Mover(list, robotPos, rotation, w);
-		mover.nextStep();
-		System.out.println(mover.resultPathCombined.get(0));
-		System.out.println(mover.resultPathCombined.get(mover.resultPathCombined.size()-1));
-		//for(ArrayList<Double> step: mover.resultPathCombined) {
-			//System.out.println(step);
-		
-		
+//		Grid grid = new Grid();
+//		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
+//		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForAllMovingBoxes().get(0));
+//		ArrayList<Point2D> list = d.getDiscretePathForMovingBox();
+//		Point2D robotPos = new Point2D.Double(0.125,0.15);
+//		double rotation = 1.57;
+//		double w = grid.getLength();
+//		Mover mover = new Mover(list, robotPos, rotation, w);
+//		mover.nextStep();
+//		System.out.println(mover.resultPathCombined.get(0));
+//		System.out.println(mover.resultPathCombined.get(mover.resultPathCombined.size()-1));
+//		//for(ArrayList<Double> step: mover.resultPathCombined) {
+//			//System.out.println(step);
+//		
+//		
 		
 	}
 	

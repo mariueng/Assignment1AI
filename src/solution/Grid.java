@@ -42,8 +42,8 @@ public class Grid {
 	public Grid(ProblemSpec ps) {
 		this.ps = ps;
 		this.w = ps.getRobotWidth();
-		double t = 0.1; //this value is somewhat random
-		this.distance =t- (w/2);
+		double t = 0.3; //this value is somewhat random
+		this.distance = 0.3;
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();
 	}
@@ -53,7 +53,7 @@ public class Grid {
 		load();
 		this.w = ps.getRobotWidth();
 		double t = 0.1; //this value is somewhat random
-		this.distance =t- (w/2);
+		this.distance = t - (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();
 	}
@@ -79,10 +79,9 @@ public class Grid {
             }
             x = w/2; //reset x-value
             y += distance; //increasy y-value when starting to sample next row
-            y = doubleFormatter(y);;
+            y = doubleFormatter(y);
         }
         deleteSamplesWithinStaticObstacle(); //deleting samples in collision with static obstacles
-        
     }
     
 	//formatter for making pretty numbers
@@ -104,7 +103,7 @@ public class Grid {
 			}
 		}
 		
-		Collections.reverse(indexesWithSO); //reverese to simplyfe the delete
+		Collections.reverse(indexesWithSO); //reverese to simplify the delete
 		for(Integer i:indexesWithSO) {
 			vertices.remove(vertices.get(i));
 		}
@@ -141,10 +140,10 @@ public class Grid {
 	
 	
 	//Assign ground type for node
-	private String assignGroundType(double x, double y) {
+	public String assignGroundType(double x, double y) {
 		String result = "";
 		//make a rectangle area around the node with heigh w/2 and width w/2 and x,y as center point
-		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y-w/2,w, w); 
+		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y+w/2,w - 0.00000001, w - 0.00000001); 
 		for(Box MO : ps.getMovingObstacles()) { //loop through moving obstacles
 			if(r.intersects(MO.getRect())) {
 				result += "MO";
@@ -152,7 +151,11 @@ public class Grid {
 		}
 		for(Box MB : ps.getMovingBoxes()) { //loop through moving boxes
 			if(r.intersects(MB.getRect())) {
-				result += "MB";
+				if (result.equals("MB")) {
+					result += "";
+				} else {
+					result += "MB";
+				}
 			}
 		}
 		for(StaticObstacle SO : ps.getStaticObstacles()) { //loop through static obstacles
@@ -200,8 +203,11 @@ public class Grid {
 		int  max_y = vertices.size() / maxNodesEachRow;
 		for (int i = 0; i < maxNodesEachRow; i++) {
 			for (int j = 0; j < max_y; j++) {
-				result += vertices.get(i + j * maxNodesEachRow) + "\t";
+				result += vertices.get(i + j * maxNodesEachRow) + "  |  ";
 			}
+			result = result.substring(0, result.length() - 1);
+			result += "\n";
+			result += "----------------------------------------------------------------------------------------------------------------------------------------------";
 			result += "\n";
 		}
 		return result;
@@ -222,9 +228,7 @@ public class Grid {
 	
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		//g.writeToFile();
-		System.out.println(g.getVertices());
+		
 	}
 	
 	

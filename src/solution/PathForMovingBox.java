@@ -24,18 +24,17 @@ import problem.ProblemSpec;
 	private ArrayList<Node> path; //output from this class
  	
 	//constructor
- 	public PathForMovingBox(int i, Grid grid) throws IOException {
+ 	public PathForMovingBox(Box movingBox, Grid grid) throws IOException {
 		this.grid = grid;
-		this.movingBox = grid.getPS().getMovingBoxes().get(i);
+		this.movingBox = movingBox;
 		this.initialNode = getInitialNode(movingBox);
 		this.helpingInitNode = makeHelpingInitNode(initialNode);
 		this.goalNode = makeGoalNode(movingBox);
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
-		changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
+		//changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
 		PathFinder pf = new PathFinder(initialNode, goalNode, grid); //find a path from initial node to goalNode
 		path = pf.findPath();
-		changeGroundTypeForNewMB();
-		
+		//changeGroundTypeForNewMB();
 	}
 	
 		/*
@@ -45,12 +44,18 @@ import problem.ProblemSpec;
 	
 	//methods for making start node based on box center point from start position
 	private Node getInitialNode(Box movingBox) {
-		double x = movingBox.getPos().getX()+0.5*grid.getLength();
+		double x = movingBox.getPos().getX() + 0.5*grid.getLength();
 		double y = movingBox.getPos().getY() + 0.5*grid.getLength();
 		//check if there is already a node in the center point of the box
 		for(Node n:grid.getVertices()) {
 			if(n.getxValue()==x && n.getyValue()==y) {
 				this.needHelpingInitNode = false;
+				for (Node neighbour : n.getNeighbours()) {
+					if (neighbour != null) {
+						neighbour.setGroundType("FS");
+					}
+				}
+				
 				return n; //found a node in the center point of the box. Don't need to make new node
 			}
 		}
@@ -119,31 +124,31 @@ import problem.ProblemSpec;
 	private double calculateDistanceBetweenTwoNodes(Node one, Node two) {
 		return Math.sqrt(Math.pow(one.getxValue()-two.getxValue() , 2) + Math.pow(one.getyValue()-two.getyValue(), 2));
 	}
-	//method for changing ground types for nodes that lies within the area of the moving box before search
-	private void changeGroundTypeForOldMB() {
-		double x = initialNode.getxValue();
-		double y = initialNode.getyValue();
-		for(Node n:grid.getVertices()) {
-			if(n.getGroundType().equals("MB")) {
-				double distance = calculateDistanceBetweenTwoNodes(n, initialNode);
-				if(distance < grid.getDistance()*2) {
-					n.setGroundType("FS");
-				}
-			}
-		}
-	}
-	//change groundtype for nodes that lies within the final position of the moving box
-	private void changeGroundTypeForNewMB() {
-		double x = goalNode.getxValue();
-		double y = goalNode.getyValue();
-		double l = grid.getLength()/2;
-		for(Node n:grid.getVertices()) {
-			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
-			if(distance <=l) {
-				n.setGroundType("MB");
-			}
-		}
-	}
+//	//method for changing ground types for nodes that lies within the area of the moving box before search
+//	private void changeGroundTypeForOldMB() {
+//		double x = initialNode.getxValue();
+//		double y = initialNode.getyValue();
+//		for(Node n:grid.getVertices()) {
+//			if(n.getGroundType().equals("MB")) {
+//				double distance = calculateDistanceBetweenTwoNodes(n, initialNode);
+//				if(distance < grid.getDistance()*2) {
+//					n.setGroundType("FS");
+//				}
+//			}
+//		}
+//	}
+//	//change groundtype for nodes that lies within the final position of the moving box
+//	private void changeGroundTypeForNewMB() {
+//		double x = goalNode.getxValue();
+//		double y = goalNode.getyValue();
+//		double l = grid.getLength()/2;
+//		for(Node n:grid.getVertices()) {
+//			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
+//			if(distance <=l) {
+//				n.setGroundType("MB");
+//			}
+//		}
+//	}
 	
 	//getPath. Method used in PathForAllMovingBoxes
 	public ArrayList<Node> getPathForMovingBox(){
@@ -162,9 +167,8 @@ import problem.ProblemSpec;
 		writer.close();
 	}
 	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		Grid g = new Grid(ps);
-		PathForMovingBox p = new PathForMovingBox(0, g);
+		Grid g = new Grid();
+		PathForMovingBox p = new PathForMovingBox(g.getPS().getMovingBoxes().get(0), g);
 		System.out.println(p.path);
 	}
 	

@@ -14,72 +14,67 @@ import problem.ProblemSpec;
 public class MovingBoxDiscretizer {
 	
 	/**
-	 * Class for discretizing all paths in the arraylist of paths for moving boxes
-	 * Input: ArrayList<ArrayLIst<Nodes>
-	 * Output: ArrayList<ArrayList<Point2D> discretized points describing path for all moving boxes. 
+	 * Class for discretizing a moving box path
+	 * Input: ArrayList<Nodes>
+	 * Output: ArrayList<Point2D> discretized points describing path for a moving boxes. 
 	 */
 	
 	//fields
-	private ArrayList<ArrayList<Point2D>> discretPathsForMovingBoxes = new ArrayList<>();
-	private ArrayList<ArrayList<Node>> nodePaths;
+	private ArrayList<Node> nodePath;
+	private ArrayList<Point2D> discretePathForMovingBox = new ArrayList<>();
 	
 	//constructor
-	public MovingBoxDiscretizer(ArrayList<ArrayList<Node>> nodePaths) {
-		this.nodePaths = nodePaths;
-		discretPathsForMovingBoxes = run();
+	public MovingBoxDiscretizer(ArrayList<Node> nodePaths) {
+		this.nodePath = nodePaths;
+		discretePathForMovingBox = run();
 	}
 	
 	/*
 	 * METHODS
 	 */
-	public ArrayList<ArrayList<Point2D>> run(){
-		for(ArrayList<Node> nodeList:nodePaths) {
-			ArrayList<Point2D> resultList = new ArrayList<>();
-			int numberOfNodesInNodeList = nodeList.size();
-			for(int i =0;i<numberOfNodesInNodeList-1;i++) {
-				Node one = nodeList.get(i);
-				Node two = nodeList.get(i+1);
-				double startX = one.getxValue();
-				double startY = one.getyValue();
-				double goalX = two.getxValue();
-				double goalY = two.getyValue();
-				double distance = calculateDistanceBetweenTwoNodes(one, two);
-				int numberOfSteps = (int) Math.floor(distance/0.001);
-				char direction = calculateDirectionFromNodeToNextNode(one, two);
-				if(direction =='u') {
-					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D.Double(startX,startY+0.001*j);
-						resultList.add(point2D);
-					}
-				}
-				else if(direction =='d') {
-					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D.Double(startX,startY-0.001*j);
-						resultList.add(point2D);
-					}
-				}
-				else if(direction =='l') {
-					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D.Double(startX-0.001*j,startY);
-						resultList.add(point2D);
-					}
-				}
-				else if(direction =='r') {
-					for(int j = 0; j<numberOfSteps; j++) {
-					    Point2D point2D = new Point2D.Double(startX+0.001*j,startY);
-						resultList.add(point2D);
-					}
+	public ArrayList<Point2D> run(){
+		ArrayList<Point2D> resultList = new ArrayList<>();
+		int numberOfNodesInNodeList = nodePath.size();
+		for(int i = 0; i < numberOfNodesInNodeList - 1; i++) {
+			System.out.println(nodePath);
+			Node one = nodePath.get(i);
+			Node two = nodePath.get(i+1);
+			double startX = one.getxValue();
+			double startY = one.getyValue();
+			double distance = calculateDistanceBetweenTwoNodes(one, two);
+			int numberOfSteps = (int) Math.floor(distance/0.001);
+			char direction = calculateDirectionFromNodeToNextNode(one, two);
+			if(direction =='u') {
+				for(int j = 0; j<numberOfSteps; j++) {
+				    Point2D point2D = new Point2D.Double(startX,startY+0.001*j);
+					resultList.add(point2D);
 				}
 			}
-			double x = nodeList.get(numberOfNodesInNodeList-1).getxValue();
-			double y = nodeList.get(numberOfNodesInNodeList-1).getyValue();
-			Point2D endPoint = new Point2D.Double(x,y);
-			resultList.add(endPoint);
-			
-			discretPathsForMovingBoxes.add(resultList);
+			else if(direction =='d') {
+				for(int j = 0; j<numberOfSteps; j++) {
+				    Point2D point2D = new Point2D.Double(startX,startY-0.001*j);
+					resultList.add(point2D);
+				}
+			}
+			else if(direction =='l') {
+				for(int j = 0; j<numberOfSteps; j++) {
+				    Point2D point2D = new Point2D.Double(startX-0.001*j,startY);
+					resultList.add(point2D);
+				}
+			}
+			else if(direction =='r') {
+				for(int j = 0; j<numberOfSteps; j++) {
+				    Point2D point2D = new Point2D.Double(startX+0.001*j,startY);
+					resultList.add(point2D);
+				}
+			}
 		}
+		double x = nodePath.get(numberOfNodesInNodeList-1).getxValue();
+		double y = nodePath.get(numberOfNodesInNodeList-1).getyValue();
+		Point2D endPoint = new Point2D.Double(x,y);
+		resultList.add(endPoint);
 		
-		return discretPathsForMovingBoxes;
+		return resultList;
 	}
 	
 	//calculate distance between two nodes
@@ -105,8 +100,8 @@ public class MovingBoxDiscretizer {
 	}
 	
 	//getters
-	public ArrayList<ArrayList<Point2D>> getDiscretPathsForMovingBoxes(){
-		return discretPathsForMovingBoxes;
+	public ArrayList<Point2D> getDiscretePathForMovingBox(){
+		return discretePathForMovingBox;
 	}
 	
 	//write path
@@ -114,7 +109,7 @@ public class MovingBoxDiscretizer {
 		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write("X-value" + "\t" +"Y-value" + "\n");
-		for(Point2D point:discretPathsForMovingBoxes.get(i)) {
+		for (Point2D point : discretePathForMovingBox) {
 			writer.write(point.getX() + "\t" + point.getY()+"\n");
 		}
 		writer.close();
@@ -122,11 +117,10 @@ public class MovingBoxDiscretizer {
 	
 	//constructor for testing
 	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		Grid grid = new Grid(ps);
-		PathForAllMovingBoxes p = new PathForAllMovingBoxes(grid);
-		System.out.println(p.getPathForAllMovingBoxes().get(0));
-		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForAllMovingBoxes());
+		Grid grid = new Grid();
+		PathForMovingBox p = new PathForMovingBox(grid.getPS().getMovingBoxes().get(0), grid);
+		System.out.println(p.getPathForMovingBox());
+		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForMovingBox());
 	}
 
 }

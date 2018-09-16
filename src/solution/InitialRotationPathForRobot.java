@@ -3,6 +3,7 @@ package solution;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import problem.Box;
 import problem.ProblemSpec;
 
 public class InitialRotationPathForRobot {
@@ -20,9 +21,7 @@ public class InitialRotationPathForRobot {
 	private ProblemSpec ps;
 	
 	//constructor
-	public InitialRotationPathForRobot(ProblemSpec ps, int i, double initialRotation) throws IOException {
-		this.ps = ps;
-		this.index = i;
+	public InitialRotationPathForRobot(Box movingBox, double initialRotation) throws IOException {
 		this.initialRotation = initialRotation;
 		this.goalDirectionOfRobot = getGoalDirectionOfRobot();
 		this.resultList = getPositions();
@@ -47,6 +46,7 @@ public class InitialRotationPathForRobot {
 	
 	private char getGoalDirectionOfRobot() throws IOException {
 		PathForRobot p = (PathForRobot) Solver.getPathsForRobotBeforeMovingBox().get(index);
+		
 		return p.getDirectionOfRobot();
 	}
 	
@@ -60,7 +60,7 @@ public class InitialRotationPathForRobot {
 	//main for testing
 	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
-		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS(), 0, 0.2);
+		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS().getMovingBoxes().get(0), 0.2);
 		System.out.println(i.getResultList());
 	}
 	

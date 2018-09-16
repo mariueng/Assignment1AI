@@ -9,9 +9,9 @@ public class Main {
     public static void main(String[] args) {
         ProblemSpec ps = new ProblemSpec();
         try {
-            ps.loadProblem("input3.txt");
+            ps.loadProblem("input1.txt");
             Solver s = new Solver(ps);
-            ps.loadSolution("output3.txt");
+            ps.loadSolution("output1.txt");
         } catch (IOException e) {
             System.out.println("IO Exception occured");
         }

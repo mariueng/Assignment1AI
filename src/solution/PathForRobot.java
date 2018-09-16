@@ -39,6 +39,7 @@ public class PathForRobot {
 		double y = startY;
 		this.startNode = makeStartNode(x, y);
 		this.helpingStartNode = makeHelpingInitNode(startNode);
+		System.out.println(startNode.getNeighbours());
 		makeGoalNode();
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
 		PathFinder pf = new PathFinder(startNode, goalNode, grid); //make PathFinder object
@@ -125,8 +126,8 @@ public class PathForRobot {
 		}
 		int index = distances.indexOf(Collections.min(distances));
 		Node closestNeighborToGoalNode = grid.getVertices().get(index); //the node we want to connect to goalNode
-		double y = closestNeighborToGoalNode.getyValue();
-		double x = goalNode.getxValue();
+		double y = goalNode.getyValue();
+		double x = closestNeighborToGoalNode.getxValue();
 		helpingGoalNode = new Node(x,y,"FS");
 		helpingGoalNode.addNeighbour(4, goalNode);
 		helpingGoalNode.addNeighbour(5, closestNeighborToGoalNode);
@@ -183,7 +184,7 @@ public class PathForRobot {
 
 	//write path to file
 	public void writeToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\robotPathData.txt");
+		FileWriter file = new FileWriter("C:\\Users\\mariu\\git\\Assignment1AI\\src\\solution\\robotPathData.txt");
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
 		for(Node n:robotPath) {
@@ -205,11 +206,12 @@ public class PathForRobot {
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-		ArrayList path = pf.getPathForAllMovingBoxes().get(1);
-		PathForRobot p = new PathForRobot(0.8, 0.75, path , g);
-		System.out.println(p.robotPath);
+//		Grid g = new Grid();
+//		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
+//		ArrayList path = pf.getPathForAllMovingBoxes().get(1);
+//		ArrayList path = 
+//		PathForRobot p = new PathForRobot(0.8, 0.75, path , g);
+//		//System.out.println(p.robotPath);
 	}
 
 }

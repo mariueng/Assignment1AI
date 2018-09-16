@@ -17,13 +17,13 @@ public class RobotPathDiscretizer {
 	 */
 	
 	//fields
-	private ArrayList<Point2D> discretPathsForRobot = new ArrayList<>();
+	private ArrayList<Point2D> discretePathForRobot = new ArrayList<>();
 	private ArrayList<Node> robotPath;
 	
 	//constructor
 	public RobotPathDiscretizer(ArrayList<Node> path) {
 		this.robotPath = path;
-		discretPathsForRobot = run();
+		this.discretePathForRobot = run();
 	}
 	
 	/*
@@ -98,22 +98,21 @@ public class RobotPathDiscretizer {
 	}
 	
 	//getters
-	public ArrayList<Point2D> getDiscretPathsForMovingBoxes(){
-		return discretPathsForRobot;
+	public ArrayList<Point2D> getDiscretePathForRobot(){
+		return discretePathForRobot;
 	}
 	
 	
 	//main for testing
 	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-		ArrayList<Node> path = pf.getPathForAllMovingBoxes().get(1);
-		PathForRobot p = new PathForRobot(0.75, 0.8, path, g);
-		ArrayList<Node> nodePath= p.getRobotPath();
-		RobotPathDiscretizer d = new RobotPathDiscretizer(nodePath);
-		System.out.println(d.getDiscretPathsForMovingBoxes());
-		System.out.println(d.getDiscretPathsForMovingBoxes().get(73));
-		System.out.println(d.getDiscretPathsForMovingBoxes().get(74));
+//		Grid g = new Grid();
+//		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
+//		ArrayList<Node> path = pf.getPathForAllMovingBoxes().get(0);
+//		PathForRobot p = new PathForRobot(0.1, 0.5, path, g);
+//		//System.out.println(p.getRobotPath());
+//		ArrayList<Node> nodePath= p.getRobotPath();
+//		RobotPathDiscretizer d = new RobotPathDiscretizer(nodePath);
+//		//System.out.println(d.getDiscretPathsForMovingBoxes());
 	}
 
 }
