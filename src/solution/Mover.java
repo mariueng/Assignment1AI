@@ -7,7 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
+import com.sun.scenario.effect.impl.prism.PrCropPeer;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+import problem.Box;
+import problem.MovingObstacle;
+import problem.StaticObstacle;
 
 public class Mover {
 	
@@ -23,10 +30,13 @@ public class Mover {
 	private Point2D initialPositionOfRobot;
 	private ArrayList<ArrayList<Double>> resultPathCombined = new ArrayList<>();
 	private double w;
+	private Grid grid;
+	private ArrayList<Rectangle2D> rectangles = new ArrayList<>();
 	
 	//constructor
-	public Mover(ArrayList<Point2D> movingBoxOriginalPath, Point2D initialPositionOfRobot, double initialRotationOfRobot, double w) {
+	public Mover(ArrayList<Point2D> movingBoxOriginalPath, Point2D initialPositionOfRobot, double initialRotationOfRobot, double w, Grid grid) {
 		this.w = w;
+		this.grid = grid;
 		this.movingBoxOriginalPath = movingBoxOriginalPath;
 		this.initialPositionOfRobot = initialPositionOfRobot;
 		//adding first step to resultPathCombines
@@ -104,6 +114,95 @@ public class Mover {
 		}
 	}
 	
+	//METHOD GOING DOWN
+	private ArrayList<ArrayList<Double>> goDown(double rotation, double length, double startX, double startY, ArrayList<ArrayList<Double>> resultList){
+		for(double i =0; i<length; i+=0.001) {
+			ArrayList<Double> step = new ArrayList<>();
+			step.addAll(Arrays.asList(rotation, startX, startY-i));
+			resultList.add(step);
+		}
+		return resultList;
+	}
+	
+	//METHOD GOING UP
+	private ArrayList<ArrayList<Double>> goUp(double rotation, double length, double startX, double startY, ArrayList<ArrayList<Double>> resultList){
+		for(double i =0; i<length; i+=0.001) {
+			ArrayList<Double> step = new ArrayList<>();
+			step.addAll(Arrays.asList(rotation, startX, startY+i));
+			resultList.add(step);
+		}
+		return resultList;
+	}
+	//METHOD GOING LEFT
+	private ArrayList<ArrayList<Double>> goLeft(double rotation, double length, double startX, double startY, ArrayList<ArrayList<Double>> resultList){
+		for(double i =0; i<length; i+=0.001) {
+			ArrayList<Double> step = new ArrayList<>();
+			step.addAll(Arrays.asList(rotation, startX-i, startY));
+			resultList.add(step);
+		}
+		return resultList;
+	}
+	//METHOD GOING RIGHT
+	private ArrayList<ArrayList<Double>> goRight(double rotation, double length, double startX, double startY, ArrayList<ArrayList<Double>> resultList){
+		for(double i =0; i<length; i+=0.001) {
+			ArrayList<Double> step = new ArrayList<>();
+			step.addAll(Arrays.asList(rotation, startX+i, startY));
+			resultList.add(step);
+		}
+		return resultList;
+	}
+	
+	//METHOD ROTATE
+	private ArrayList<ArrayList<Double>> rotate(double initRotation, char resultDir, double startX, double startY, ArrayList<ArrayList<Double>> resultList){
+		RobotRotator r = new RobotRotator(initRotation, resultDir);
+		ArrayList<Double> orientationList = r.getOrientationList();
+		int numberOfSteps = orientationList.size();
+		for(int i =0; i<numberOfSteps; i++) {
+			ArrayList<Double> step = new ArrayList<>();
+			step.addAll(Arrays.asList(orientationList.get(i), startX, startY));
+			resultList.add(step);
+		}
+		return resultList;
+	}
+	
+	//check if collisionfree path
+	private boolean checkIfCollisionFreeTurn(double x, double y, char startDir, char goalDir) {
+		double xRobot;
+		double yRobot;
+		boolean result = true;
+		
+		if(startDir == 'u') { //from bottom 
+			xRobot = x;
+			yRobot = y-(w/2);
+		} else if(startDir =='d') { //from top
+			xRobot = x;
+			yRobot = y + (w/2);
+		}else if(startDir == 'l') { //from right
+			yRobot = y;
+			xRobot = x +w/2;
+		} else { //from left
+			yRobot = y;
+			xRobot = x -(w/2);
+		}
+		Rectangle2D area = new Rectangle2D.Double(xRobot, yRobot,w/2, w/2);
+		rectangles.add(area);
+		//check for movingObstacles
+		for(Box obstacle:grid.getPS().getMovingObstacles()) {
+			if(obstacle.getRect().intersects(area)) {
+				result = false;
+			}
+		}
+		
+		//check for static obstacles
+		for(StaticObstacle obstacle:grid.getPS().getStaticObstacles()) {
+			if(obstacle.getRect().intersects(area)) {
+				result = false;
+			}
+		}
+		
+		return result;
+	}
+	
 	/*
 	 * Make a list with the primitves a robot needs to take when direction changes
 	 * The output is a matrix [(x,y,a), (x,y,a) .... (x,y,a)] describing position of the robot
@@ -112,261 +211,222 @@ public class Mover {
 		ArrayList<ArrayList<Double>> resultList = new ArrayList<>();
 		double secondX;
 		double secondY;
+		int normalProcedure = 1;
+		int collisionProcedure = 2;
+		int procedure;
+		if(checkIfCollisionFreeTurn(startX, startY, startDir, goalDir)) {
+			procedure = normalProcedure;
+		} else {
+			procedure = collisionProcedure;
+		}
+		
 		
 		//find out what instance of turn you want:
 		if(startDir == 'u' && goalDir == 'r') { //from bottom to left side
-			//go down w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, startX, startY-i));
-				resultList.add(step);
+			if(procedure == normalProcedure) { //no collision detected
+				//go down w/2
+				resultList = goDown(0.0, w/2, startX, startY, resultList);
+				secondY = startY-(w/2);
+				//rotate
+				resultList = rotate(0, 'u', startX, secondY, resultList);
+				//go left w/2
+				resultList = goLeft(1.57, w/2, startX, secondY, resultList);
+				secondX = startX -(w/2);
+				//go up w
+				resultList = goUp(1.57, w, secondX,secondY, resultList);
 			}
-			secondY = startY-(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(0, 'u');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), startX, secondY));
-				resultList.add(step);
- 			}
-			//go left w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX-i, secondY));
-				resultList.add(step);
+			else {//detected collision
+				//go left w
+				resultList = goLeft(0.0, w, startX, startY, resultList);
+				secondX = startX-(w);
+				//rotate
+				resultList = rotate(0, 'u', secondX, startY, resultList);
+				//go up w/2
+				resultList = goUp(1.57, w/2, secondX,startY, resultList);
+				secondY = startY+(w/2);
+				//go right w/2
+				resultList = goRight(1.57, w/2, secondX, secondY, resultList);
 			}
-			secondX = startX -(w/2);
-			//go up w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, secondX, secondY+i));
-				resultList.add(step);
-			}
-			
 		}
 		else if(startDir == 'u' && goalDir == 'l') { //from bottom to right side
-			//go down w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, startX, startY-i));
-				resultList.add(step);
-			}
-			secondY = startY-(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(0, 'u');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), startX, secondY));
-				resultList.add(step);
- 			}
-			//go right w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX+i, secondY));
-				resultList.add(step);
-			}
-			secondX = startX +(w/2);
-			//go up w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, secondX, secondY+i));
-				resultList.add(step);
+			if(procedure == normalProcedure) {
+				//go down w/2
+				resultList = goDown(0.0, w/2, startX, startY, resultList);
+				secondY = startY-(w/2);
+				//rotate
+				resultList = rotate(0, 'u', startX, secondY, resultList);
+				//go right w/2
+				resultList = goRight(1.57, w/2, startX, secondY, resultList);
+				secondX = startX +(w/2);
+				//go up w
+				resultList = goUp(1.57, w, secondX,secondY, resultList);
+			} else {
+				//go right w
+				resultList = goRight(0.0, w, startX, startY, resultList);
+				secondX = startX+(w);
+				//rotate
+				resultList = rotate(0, 'u', secondX, startY, resultList);
+				//go up w/2
+				resultList = goUp(1.57, w/2, secondX,startY, resultList);
+				secondY = startY+(w/2);
+				//go left w/2
+				resultList = goLeft(1.57, w/2, secondX, secondY, resultList);
 			}
 			
 		}
 		else if(startDir == 'd' && goalDir == 'r') { //from top to left side
-			//go up w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, startX, startY+i));
-				resultList.add(step);
-			}
-			secondY = startY+(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(0, 'u');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), startX, secondY));
-				resultList.add(step);
- 			}
-			//go left w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX-i, secondY));
-				resultList.add(step);
-			}
-			secondX = startX -(w/2);
-			//go down w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, secondX, secondY-i));
-				resultList.add(step);
+			if(procedure == normalProcedure) {
+				//go up w/2
+				resultList = goUp(0.0, w/2, startX,startY, resultList);
+				secondY = startY+(w/2);
+				//rotate
+				resultList = rotate(0, 'u', startX, secondY, resultList);
+				//go left w/2
+				resultList = goLeft(1.57, w/2, startX, secondY, resultList);
+				secondX = startX -(w/2);
+				//go down w
+				resultList = goDown(1.57, w, secondX, secondY, resultList);
+			} else {
+				//go left w
+				resultList = goLeft(0.0, w, startX,startY, resultList);
+				secondX = startX-(w);
+				//rotate
+				resultList = rotate(0, 'u', secondX, startY, resultList);
+				//go down w/2
+				resultList = goDown(1.57, w/2, secondX, startY, resultList);
+				secondY = startY -(w/2);
+				//go right w/2
+				resultList = goRight(1.57, w/2, secondX, secondY, resultList);
 			}
 			
 		}
 		else if(startDir == 'd' && goalDir =='l') {//from top to right side
-			//go up w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, startX, startY+i));
-				resultList.add(step);
-			}
-			secondY = startY+(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(0, 'u');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), startX, secondY));
-				resultList.add(step);
- 			}
-			//go right w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX+i, secondY));
-				resultList.add(step);
-			}
-			secondX = startX +(w/2);
-			//go down w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, secondX, secondY-i));
-				resultList.add(step);
+			if(procedure == normalProcedure) {
+				//go up w/2
+				resultList = goUp(0.0, w/2, startX,startY, resultList);
+				secondY = startY+(w/2);
+				//rotate
+				resultList = rotate(0, 'u', startX, secondY, resultList);
+				//go right w/2
+				resultList = goRight(1.57, w/2, startX, secondY, resultList);
+				secondX = startX +(w/2);
+				//go down w
+				resultList = goDown(1.57, w, secondX, secondY, resultList);
+			} else {
+				//go right w
+				resultList = goRight(0.0, w, startX,startY, resultList);
+				secondX = startX+(w);
+				//rotate
+				resultList = rotate(0, 'u', secondX, startY, resultList);
+				//go down w/2
+				resultList = goDown(1.57, w/2, secondX, startY, resultList);
+				secondY = startY -(w/2);
+				//go left w/2
+				resultList = goLeft(1.57, w/2, secondX, secondY, resultList);
 			}
 			
 		}
 		else if(startDir == 'r' && goalDir=='u') {//from left to bottom
-			//go left w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX-i, startY));
-				resultList.add(step);
-			}
-			secondX = startX-(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(1.57, 'f');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), secondX, startY));
-				resultList.add(step);
- 			}
-			//go down w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX, startY-i));
-				resultList.add(step);
-			}
-			secondY = startY -(w/2);
-			//go right w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX+i, secondY));
-				resultList.add(step);
+			if(procedure == normalProcedure) {
+				//go left w/2
+				resultList = goLeft(1.57, w/2, startX, startY, resultList);
+				secondX = startX-(w/2);
+				//rotate
+				resultList = rotate(1.57, 'f', secondX, startY, resultList);
+				//go down w/2
+				resultList = goDown(0.0, w/2, secondX, startY, resultList);
+				secondY = startY -(w/2);
+				//go right w
+				resultList = goRight(0.0, w, secondX, secondY, resultList);
+			}else {
+				//go down w
+				resultList = goDown(1.57, w, startX, startY, resultList);
+				secondY = startY-(w);
+				//rotate
+				resultList = rotate(1.57, 'f', startX, secondY, resultList);
+				//go right w/2
+				resultList = goRight(0.0, w/2, startX, secondY, resultList);
+				secondX = startX +(w/2);
+				//go up w/2
+				resultList = goRight(0.0, w/2, secondX, secondY, resultList);
 			}
 			
 		}
 		else if(startDir =='r' && goalDir =='d') {//from left to top
-			//go left w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX-i, startY));
-				resultList.add(step);
+			if(procedure ==normalProcedure) { 
+				//go left w/2
+				resultList = goLeft(1.57, w/2, startX, startY, resultList);
+				secondX = startX-(w/2);
+				//rotate
+				resultList = rotate(1.57, 'f', secondX, startY, resultList);
+				//go up w/2
+				resultList = goUp(0.0, w/2, secondX,startY, resultList);
+				secondY = startY +(w/2);
+				//go right w
+				resultList = goRight(0.0, w, secondX, secondY, resultList);
+			} else {
+				//go up w
+				resultList = goUp(1.57, w, startX, startY, resultList);
+				secondY = startY+(w);
+				//rotate
+				resultList = rotate(1.57, 'f', startX, secondY, resultList);
+				//go right w/2
+				resultList = goRight(0.0, w/2, startX, secondY, resultList);
+				secondX = startX +(w/2);
+				//go down w/2
+				resultList = goDown(0.0, w/2, secondX, secondY, resultList);
 			}
-			secondX = startX-(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(1.57, 'f');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), secondX, startY));
-				resultList.add(step);
- 			}
-			//go up w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX, startY+i));
-				resultList.add(step);
-			}
-			secondY = startY +(w/2);
-			//go right w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX+i, secondY));
-				resultList.add(step);
-			}
-			
+				
 		}
 		else if(startDir =='l' && goalDir == 'u') {//from right to bottom
-			//go right w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX+i, startY));
-				resultList.add(step);
-			}
-			secondX = startX+(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(1.57, 'f');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), secondX, startY));
-				resultList.add(step);
- 			}
-			//go down w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX, startY-i));
-				resultList.add(step);
-			}
-			secondY = startY -(w/2);
-			//go left w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX-i, secondY));
-				resultList.add(step);
+			if(procedure == normalProcedure) {
+				//go right w/2
+				resultList = goRight(1.57, w/2, startX, startY, resultList);
+				secondX = startX+(w/2);
+				//rotate
+				resultList = rotate(1.57, 'f', secondX, startY, resultList);
+				//go down w/2
+				resultList = goDown(0.0, w/2, secondX, startY, resultList);
+				secondY = startY -(w/2);
+				//go left w
+				resultList = goLeft(0.0, w, secondX, secondY, resultList);
+			}else {
+				//go down w
+				resultList = goDown(1.57, w, startX, startY, resultList);
+				secondY = startY-(w);
+				//rotate
+				resultList = rotate(1.57, 'f', startX, secondY, resultList);
+				//go left w/2
+				resultList = goLeft(0.0, w/2, startX, secondY, resultList);
+				secondX = startX -(w/2);
+				//go up w/2
+				resultList = goUp(0.0, w/2, secondX, secondY, resultList);
 			}
 			
 		}
 		else if(startDir =='l' && goalDir=='d') {//from right to top
-			//go right w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX+i, startY));
-				resultList.add(step);
-			}
-			secondX = startX+(w/2);
-			//rotate
-			RobotRotator r = new RobotRotator(1.57, 'f');
-			ArrayList<Double> orientationList = r.getOrientationList();
-			int numberOfStep = orientationList.size();
-			for(int i = 0;i<numberOfStep;i++) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(orientationList.get(i), secondX, startY));
-				resultList.add(step);
- 			}
-			//go up w/2
-			for(double i =0.0; i<w/2; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX, startY+i));
-				resultList.add(step);
-			}
-			secondY = startY +(w/2);
-			//go left w
-			for(double i =0.0; i<w; i+=0.001) {
-				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(0.0, secondX-i, secondY));
-				resultList.add(step);
+			if(procedure == normalProcedure) {
+				//go right w/2
+				resultList = goRight(1.57, w/2, startX, startY, resultList);
+				secondX = startX+(w/2);
+				//rotate
+				resultList = rotate(1.57, 'f', secondX, startY, resultList);
+				//go up w/2
+				resultList = goUp(0.0, w/2, secondX,startY, resultList);
+				secondY = startY +(w/2);
+				//go left w
+				resultList = goLeft(0.0, w, secondX, secondY, resultList);
+			}else {
+				//go up w
+				resultList = goUp(1.57, w, startX, startY, resultList);
+				secondY = startY+(w);
+				//rotate
+				resultList = rotate(1.57, 'f', startX, secondY, resultList);
+				//go left w/2
+				resultList = goLeft(0.0, w/2, startX, secondY, resultList);
+				secondX = startX -(w/2);
+				//go down w/2
+				resultList = goDown(0.0, w/2, secondX, secondY, resultList);
 			}
 		}
 			
@@ -410,6 +470,7 @@ public class Mover {
 	public ArrayList<ArrayList<Double>> getResultList(){
 		return resultPathCombined;
 	}
+	
 	
 	//write to file
 	public void writeToFile() throws IOException {

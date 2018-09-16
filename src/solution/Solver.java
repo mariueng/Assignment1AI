@@ -3,12 +3,14 @@ package solution;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import problem.Box;
@@ -45,6 +47,8 @@ public class Solver {
 		this.ps = ps;
         w = ps.getRobotWidth();
         this.movingBoxes = ps.getMovingBoxes();
+        Collections.reverse(movingBoxes);
+        Collections.reverse(ps.getMovingBoxEndPositions());
         this.numberOfMovingBoxes = movingBoxes.size();
         this.movingObstacles = ps.getMovingObstacles();
         this.numberOfMovingObstacles = movingObstacles.size();
@@ -55,7 +59,7 @@ public class Solver {
         
         //run
 		run();
-		writeSolutionToFile();
+		writeSolutionToFile(); //add outputFileName
 	}
 	
 	/**
@@ -189,7 +193,7 @@ public class Solver {
 		double alpha = lastStep.get(2);
 		Point2D robotPos = new Point2D.Double(xRobot, yRobot);
 		ArrayList<Point2D> boxPath = discMovingBoxPath.getDiscretePathForMovingBox();
-		Mover mover = new Mover(boxPath, robotPos, alpha, w);
+		Mover mover = new Mover(boxPath, robotPos, alpha, w, grid);
 		mover.nextStep();
 		ArrayList<ArrayList<Double>> steps = mover.getResultList();
 		int numberOfSteps = steps.size();
@@ -348,8 +352,11 @@ public class Solver {
 	 * writeSolutionToFile
 	 */
 	
-	public void writeSolutionToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\output1.txt");
+	public void writeSolutionToFile() throws IOException { //Add outputFileName
+		//absolute path 
+		String path = new File("").getAbsolutePath();
+		//String output = path "\"+outputFileName
+		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\output3.txt");
 		int numberOfPrimitiveSteps = outPut.size();
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write(numberOfPrimitiveSteps + "\n");

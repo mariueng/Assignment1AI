@@ -240,7 +240,18 @@ public class Grid {
      }
      return result;
  }
-    
+ 
+	//getMB and MO vertices
+	public ArrayList<Node> getVerticesInMovingBoxesAndMovingObstacles(){
+	    ArrayList<Node> result = new ArrayList<>();
+	    for(Node n:this.getVertices()) {
+	        if(n.getGroundType().equals("MB") || n.getGroundType().equals("MO")) {
+	            result.add(n);
+	        }
+	    }
+	    return result;
+	}
+ 
 	public ArrayList<Integer> getIndexesOfMovingBoxesNodes() {
         ArrayList<Integer> index = new ArrayList<>();
         for(Node n: this.getVertices()) {
