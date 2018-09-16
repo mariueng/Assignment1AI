@@ -31,10 +31,8 @@ import problem.ProblemSpec;
 		this.helpingInitNode = makeHelpingInitNode(initialNode);
 		this.goalNode = makeGoalNode(movingBox);
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
-		//changeGroundTypeForOldMB(); //change groundtype for the nodes within the moving box before it is moved
 		PathFinder pf = new PathFinder(initialNode, goalNode, grid); //find a path from initial node to goalNode
 		path = pf.findPath();
-		//changeGroundTypeForNewMB();
 	}
 	
 		/*
@@ -107,7 +105,6 @@ import problem.ProblemSpec;
 	//method for making goalNode
 	private Node makeGoalNode(Box movingBox) {
 		Point2D p = grid.getPS().getMovingBoxEndPositions().get(grid.getPS().getMovingBoxes().indexOf(movingBox));
-		//System.out.println(p);
 		double x = p.getX() + grid.getLength()*0.5;
 		double y = p.getY() + grid.getLength()*0.5;
 		//check if there is already a node in this end position
@@ -124,31 +121,7 @@ import problem.ProblemSpec;
 	private double calculateDistanceBetweenTwoNodes(Node one, Node two) {
 		return Math.sqrt(Math.pow(one.getxValue()-two.getxValue() , 2) + Math.pow(one.getyValue()-two.getyValue(), 2));
 	}
-//	//method for changing ground types for nodes that lies within the area of the moving box before search
-//	private void changeGroundTypeForOldMB() {
-//		double x = initialNode.getxValue();
-//		double y = initialNode.getyValue();
-//		for(Node n:grid.getVertices()) {
-//			if(n.getGroundType().equals("MB")) {
-//				double distance = calculateDistanceBetweenTwoNodes(n, initialNode);
-//				if(distance < grid.getDistance()*2) {
-//					n.setGroundType("FS");
-//				}
-//			}
-//		}
-//	}
-//	//change groundtype for nodes that lies within the final position of the moving box
-//	private void changeGroundTypeForNewMB() {
-//		double x = goalNode.getxValue();
-//		double y = goalNode.getyValue();
-//		double l = grid.getLength()/2;
-//		for(Node n:grid.getVertices()) {
-//			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
-//			if(distance <=l) {
-//				n.setGroundType("MB");
-//			}
-//		}
-//	}
+
 	
 	//getPath. Method used in PathForAllMovingBoxes
 	public ArrayList<Node> getPathForMovingBox(){

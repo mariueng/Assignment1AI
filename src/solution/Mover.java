@@ -227,13 +227,13 @@ public class Mover {
 				step.addAll(Arrays.asList(orientationList.get(i), startX, secondY));
 				resultList.add(step);
  			}
-			//go left w/2
+			//go right w/2
 			for(double i =0.0; i<w/2; i+=0.001) {
 				ArrayList<Double> step = new ArrayList<>();
-				step.addAll(Arrays.asList(1.57, startX-i, secondY));
+				step.addAll(Arrays.asList(1.57, startX+i, secondY));
 				resultList.add(step);
 			}
-			secondX = startX -(w/2);
+			secondX = startX +(w/2);
 			//go down w
 			for(double i =0.0; i<w; i+=0.001) {
 				ArrayList<Double> step = new ArrayList<>();
@@ -361,7 +361,7 @@ public class Mover {
 				step.addAll(Arrays.asList(0.0, secondX, startY+i));
 				resultList.add(step);
 			}
-			secondY = startY -(w/2);
+			secondY = startY +(w/2);
 			//go left w
 			for(double i =0.0; i<w; i+=0.001) {
 				ArrayList<Double> step = new ArrayList<>();

@@ -42,7 +42,7 @@ public class Grid {
 	public Grid(ProblemSpec ps) {
 		this.ps = ps;
 		this.w = ps.getRobotWidth();
-		double t = 0.3; //this value is somewhat random
+		double t = 0.1; //this value is somewhat random
 		this.distance = 0.3;
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();
@@ -151,11 +151,7 @@ public class Grid {
 		}
 		for(Box MB : ps.getMovingBoxes()) { //loop through moving boxes
 			if(r.intersects(MB.getRect())) {
-				if (result.equals("MB")) {
-					result += "";
-				} else {
-					result += "MB";
-				}
+					result += "MB"; //risk of beocming MBMB, but that is just a good thing
 			}
 		}
 		for(StaticObstacle SO : ps.getStaticObstacles()) { //loop through static obstacles
@@ -224,11 +220,37 @@ public class Grid {
 		writer.close();
 	}
 	
+	public ArrayList<Integer> getIndexesOfMovingBoxesNodes() {
+		ArrayList<Integer> index = new ArrayList<>();
+		for(Node n: this.getVertices()) {
+			if(n.getGroundType().equals("MB")) {
+				int i = this.getVertices().indexOf(n);
+				index.add(i);
+			}
+		}
+		return index;
+	}
 	
+	public int getNumberOfFreeSpaceNodes() {
+		int counter = 0;
+		for(Node n:this.getVertices()) {
+			if(n.getGroundType().equals("FS")) {
+				counter++;
+			}
+		}
+		return counter;
+	}
+	
+	public int getNumberOfNodes() {
+		return this.getVertices().size();
+	}
 	
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
-		
+		Grid g = new Grid();
+		System.out.println(g.getIndexesOfMovingBoxesNodes());
+		System.out.println(g.getNumberOfFreeSpaceNodes());
+		System.out.println(g.getNumberOfNodes());
 	}
 	
 	

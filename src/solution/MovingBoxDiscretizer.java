@@ -36,7 +36,6 @@ public class MovingBoxDiscretizer {
 		ArrayList<Point2D> resultList = new ArrayList<>();
 		int numberOfNodesInNodeList = nodePath.size();
 		for(int i = 0; i < numberOfNodesInNodeList - 1; i++) {
-			System.out.println(nodePath);
 			Node one = nodePath.get(i);
 			Node two = nodePath.get(i+1);
 			double startX = one.getxValue();

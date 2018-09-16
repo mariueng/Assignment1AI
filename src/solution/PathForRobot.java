@@ -39,7 +39,6 @@ public class PathForRobot {
 		double y = startY;
 		this.startNode = makeStartNode(x, y);
 		this.helpingStartNode = makeHelpingInitNode(startNode);
-		System.out.println(startNode.getNeighbours());
 		makeGoalNode();
 		this.helpingGoalNode = makeHelpingGoalNode(goalNode);
 		PathFinder pf = new PathFinder(startNode, goalNode, grid); //make PathFinder object
@@ -155,23 +154,18 @@ public class PathForRobot {
 		if(first.getyValue() < second.getyValue()) {
 			c = 'u';
 			this.directionOfRobot = 'f';
-			System.out.println("THE BOX WILL START TO MOVE UP");
 		}
 		else if(first.getxValue() > second.getxValue()) {
 			c = 'l';
 			this.directionOfRobot ='u';
-			System.out.println("THE BOX WILL START TO MOVE LEFT");
 		}
 		else if(first.getxValue()<second.getxValue()) {
 			c ='r';
 			this.directionOfRobot = 'u';
-			System.out.println("Xfirst: " + first.getxValue() + " xSecond: " + second.getxValue());
-			System.out.println("THE BOX WILL START TO MOVE RIGHT");
 		}
 		else {
 			c='d';
 			this.directionOfRobot = 'f';
-			System.out.println("THE BOX WILL START TO MOVE DOWN");
 		}
 		return c;
 	}
