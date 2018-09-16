@@ -74,7 +74,7 @@ public class Solver {
 		InitialRotationPathForRobot robotRotation; //robot rotation before staring its path to the box
 		
 		for (int i = 0; i < numberOfMovingBoxes; i++) {
-			System.out.println(i);
+			System.out.println("Box number: " + i);
 			int indexOFLastStep = outPut.size()-1; //the index value of the last step we took moving the previous box
 			currentBoxToMove = movingBoxes.get(i);
 			pathForMovingBox = new PathForMovingBox(currentBoxToMove, grid);
@@ -88,6 +88,7 @@ public class Solver {
 			discPathForRobot = new RobotPathDiscretizer(robotPathNodes);
 			double initOrientationValue = outPut.get(indexOFLastStep).get(2);
 			robotRotation = new InitialRotationPathForRobot(currentBoxToMove, initOrientationValue);
+			
 			
 			orientRobot(robotRotation);
 			moveRobotToBox(discPathForRobot);
@@ -139,13 +140,21 @@ public class Solver {
 	
 	//method for changing ground types for nodes that lies within the area of the moving box before search
 	private void changeGroundTypeForOldMB(int i) {
-		for(Node n : grid.getVertices()) {
-			if(n.getGroundType().equals("MB")) {
-				double x = n.getxValue();
-				double y = n.getyValue();
-				Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y+w/2,w +w/2, w+w/2); //fake rectangle around start position
-				if(r.intersects(movingBoxes.get(i).getRect())) {
+		double x = ps.getMovingBoxes().get(i).getPos().getX()-w/2;
+		double y = ps.getMovingBoxes().get(i).getPos().getY()-w/2;
+		x = doubleFormatter(x);
+		y = doubleFormatter(y);
+		System.out.println("X: " + x);
+		System.out.println("Y: " + y);
+		Rectangle2D.Double r = new Rectangle2D.Double(x,y,2*w+0.01, 2*w+0.01); //fake rectangle around end position
+		System.out.println("Square around box nr. "+ i + ": " + r);
+		for(Node n : grid.getVerticesInMovingBoxes()) {
+			Point2D node = new Point2D.Double(n.getxValue(), n.getyValue());
+			if(r.contains(node)) {
+				boolean markedLater = n.getisMarkedMBBySomeLaterMovingBox(i, ps);
+				if(!(markedLater)) {
 					n.setGroundType("FS");
+					System.out.println(n);
 				}
 			}
 		}
@@ -154,7 +163,9 @@ public class Solver {
 	private void changeGroundTypeForNewMB(int i) {
 		double x = ps.getMovingBoxEndPositions().get(i).getX();
 		double y = ps.getMovingBoxEndPositions().get(i).getY();
-		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y+w/2,w +w/2, w+w/2); //fake rectangle around end position
+		x = doubleFormatter(x);
+		y = doubleFormatter(y);
+		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y-w/2,2*w, 2*w); //fake rectangle around end position
 		for(Node n : grid.getVertices()) {
 			Point2D node = new Point2D.Double(n.getxValue(), n.getyValue());
 			if(r.contains(node)) {

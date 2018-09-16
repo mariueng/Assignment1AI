@@ -51,8 +51,8 @@
 			while(isFinished == false && open.size()>0) {
 				expandNode(open.poll()); 
 				counter ++;
-				if(counter >1000) {
-					System.err.print("Time error. Opened 1000 nodes without finding goal node.");
+				if(counter == grid.getNumberOfFreeSpaceNodes()-10) {
+					System.err.print("Did not find a path from : " + initialNode + " to " + goalNode);
 					isFinished = true;
 				}
 			}return path;
@@ -71,6 +71,7 @@
 				}
 				else {
 					if(neighbor == goalNode) {
+						System.out.println("SUCCESS");
 						isFinished = true;
 						neighbor.setParent(node);
 						this.path = addParentNodesInPath(neighbor);

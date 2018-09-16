@@ -72,12 +72,12 @@ public class PathForRobot {
 		}
 		Node helpingStartNode = null;
 		List<Double> distances = new ArrayList<>();
-		for(Node n:grid.getVertices()) {
+		for(Node n:grid.getVerticesInFreeSpace()) {
 			double distance = calculateDistanceBetweenTwoNodes(startNode, n);
 			distances.add(distance);
 		}
 		int index = distances.indexOf(Collections.min(distances));
-		Node closestNeighborToInitialNode = grid.getVertices().get(index); //the node we want to connect to initialNode 
+		Node closestNeighborToInitialNode = grid.getVerticesInFreeSpace().get(index); //the node we want to connect to initialNode 
 		double y = closestNeighborToInitialNode.getyValue();
 		double x = startNode.getxValue();
 		helpingStartNode = new Node(x,y,"FS");
@@ -110,40 +110,26 @@ public class PathForRobot {
 			goalNode = n;
 		}
 		
-		
 	}
 	//make a helping node for startNode
 	private Node makeHelpingGoalNode(Node goalNode) {
-		if(needHelpingGoalNode==false) {
-			return null;
-		}
 		Node helpingGoalNode = null;
 		List<Double> distances = new ArrayList<>();
-		for(Node n:grid.getVertices()) {
+		for(Node n:grid.getVerticesInFreeSpace()) {
 			double distance = calculateDistanceBetweenTwoNodes(goalNode, n);
 			distances.add(distance);
 		}
 		int index = distances.indexOf(Collections.min(distances));
-		Node closestNeighborToGoalNode = grid.getVertices().get(index); //the node we want to connect to goalNode
+		Node closestNeighborToGoalNode = grid.getVerticesInFreeSpace().get(index); //the node we want to connect to initialNode
 		double y = goalNode.getyValue();
 		double x = closestNeighborToGoalNode.getxValue();
 		helpingGoalNode = new Node(x,y,"FS");
 		helpingGoalNode.addNeighbour(4, goalNode);
 		helpingGoalNode.addNeighbour(5, closestNeighborToGoalNode);
+
 		return helpingGoalNode;
 	}
 	
-	//connect goalNode to Grid
-	public void connectToGrid(Node n) {
-		List<Double> distances = new ArrayList<>();
-		for(Node node :grid.getVertices()) {
-			double distance = calculateDistanceBetweenTwoNodes(goalNode, node);
-			distances.add(distance);
-		}
-		int index = distances.indexOf(Collections.min(distances));
-		Node closestNeighborToGoalNode = grid.getVertices().get(index); //the node we want to connect to the goalNode 
-		closestNeighborToGoalNode.addNeighbour(5, goalNode);
-	}
 	
 	//calculate what side of the box you want to put your robot in
 	private char calculateDirection() {

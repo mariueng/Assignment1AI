@@ -1,7 +1,12 @@
 package solution;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.List;
+
+import problem.Box;
+import problem.MovingBox;
+import problem.ProblemSpec;
 
 public class Node implements Comparable<Node> {
 	
@@ -105,6 +110,27 @@ public class Node implements Comparable<Node> {
 		return this.parentNode;
 	}
 	
+	//see if node is marked as MB-groundtype by some later movingbox
+	private boolean isMarkedMBBySomeLaterMovingBox(int i, ProblemSpec ps) {
+		boolean result = false;
+		double x = this.getxValue();
+		double y = this.getyValue();
+		double w = ps.getRobotWidth();
+		int numberOfLaterMovingBoxes = ps.getMovingBoxes().size() - (i+1); //if i is 0 and there are a total of 2 movingBoxes, then it yields 1 (MB left)
+		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y-w/2,w, w); 
+		for(int j = i+1; j<=numberOfLaterMovingBoxes; j++) { //loop through moving boxes
+			MovingBox MB =(MovingBox) ps.getMovingBoxes().get(j);
+			if(r.intersects(MB.getRect())) {
+				result = true;
+				System.out.println("Marked by MB later: " + this);
+			}
+		}
+		return result;
+	}
+	//get ismark
+	public boolean getisMarkedMBBySomeLaterMovingBox(int i, ProblemSpec ps) {
+		return isMarkedMBBySomeLaterMovingBox(i, ps);
+	}
 	
 	//setters for estimating totalCost
 	public void setGValue(double i) { // step-distance from start node in path. 

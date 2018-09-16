@@ -43,7 +43,7 @@ public class Grid {
 		this.ps = ps;
 		this.w = ps.getRobotWidth();
 		double t = 0.1; //this value is somewhat random
-		this.distance = 0.3;
+		this.distance =t- (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();
 	}
@@ -53,7 +53,7 @@ public class Grid {
 		load();
 		this.w = ps.getRobotWidth();
 		double t = 0.1; //this value is somewhat random
-		this.distance = t - (w/2);
+		this.distance =t- (w/2);
 		this.maxNodesEachRow = (int) Math.floor((1-w)/distance); 
 		sampleGrid();
 	}
@@ -79,9 +79,10 @@ public class Grid {
             }
             x = w/2; //reset x-value
             y += distance; //increasy y-value when starting to sample next row
-            y = doubleFormatter(y);
+            y = doubleFormatter(y);;
         }
         deleteSamplesWithinStaticObstacle(); //deleting samples in collision with static obstacles
+        
     }
     
 	//formatter for making pretty numbers
@@ -103,7 +104,7 @@ public class Grid {
 			}
 		}
 		
-		Collections.reverse(indexesWithSO); //reverese to simplify the delete
+		Collections.reverse(indexesWithSO); //reverese to simplyfe the delete
 		for(Integer i:indexesWithSO) {
 			vertices.remove(vertices.get(i));
 		}
@@ -140,10 +141,10 @@ public class Grid {
 	
 	
 	//Assign ground type for node
-	public String assignGroundType(double x, double y) {
+	private String assignGroundType(double x, double y) {
 		String result = "";
 		//make a rectangle area around the node with heigh w/2 and width w/2 and x,y as center point
-		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y+w/2,w - 0.00000001, w - 0.00000001); 
+		Rectangle2D.Double r = new Rectangle2D.Double(x-w/2,y-w/2,w, w); 
 		for(Box MO : ps.getMovingObstacles()) { //loop through moving obstacles
 			if(r.intersects(MO.getRect())) {
 				result += "MO";
@@ -151,7 +152,7 @@ public class Grid {
 		}
 		for(Box MB : ps.getMovingBoxes()) { //loop through moving boxes
 			if(r.intersects(MB.getRect())) {
-					result += "MB"; //risk of beocming MBMB, but that is just a good thing
+				result += "MB";
 			}
 		}
 		for(StaticObstacle SO : ps.getStaticObstacles()) { //loop through static obstacles
@@ -199,11 +200,8 @@ public class Grid {
 		int  max_y = vertices.size() / maxNodesEachRow;
 		for (int i = 0; i < maxNodesEachRow; i++) {
 			for (int j = 0; j < max_y; j++) {
-				result += vertices.get(i + j * maxNodesEachRow) + "  |  ";
+				result += vertices.get(i + j * maxNodesEachRow) + "\t";
 			}
-			result = result.substring(0, result.length() - 1);
-			result += "\n";
-			result += "----------------------------------------------------------------------------------------------------------------------------------------------";
 			result += "\n";
 		}
 		return result;
@@ -220,37 +218,62 @@ public class Grid {
 		writer.close();
 	}
 	
+	
+	//GETTERS
+	   //getFS vertices
+    public ArrayList<Node> getVerticesInFreeSpace(){
+        ArrayList<Node> result = new ArrayList<>();
+        for(Node n:this.getVertices()) {
+            if(n.getGroundType().equals("FS")) {
+                result.add(n);
+            }
+        }
+        return result;
+    }
+	   //getMB vertices
+ public ArrayList<Node> getVerticesInMovingBoxes(){
+     ArrayList<Node> result = new ArrayList<>();
+     for(Node n:this.getVertices()) {
+         if(n.getGroundType().equals("MB")) {
+             result.add(n);
+         }
+     }
+     return result;
+ }
+    
 	public ArrayList<Integer> getIndexesOfMovingBoxesNodes() {
-		ArrayList<Integer> index = new ArrayList<>();
-		for(Node n: this.getVertices()) {
-			if(n.getGroundType().equals("MB")) {
-				int i = this.getVertices().indexOf(n);
-				index.add(i);
-			}
-		}
-		return index;
-	}
+        ArrayList<Integer> index = new ArrayList<>();
+        for(Node n: this.getVertices()) {
+            if(n.getGroundType().equals("MB")) {
+                int i = this.getVertices().indexOf(n);
+                index.add(i);
+            }
+        }
+        return index;
+    }
+   
+    public int getNumberOfFreeSpaceNodes() {
+        int counter = 0;
+        for(Node n:this.getVertices()) {
+            if(n.getGroundType().equals("FS")) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+   
+    public int getNumberOfNodes() {
+        return this.getVertices().size();
+    }
+   
 	
-	public int getNumberOfFreeSpaceNodes() {
-		int counter = 0;
-		for(Node n:this.getVertices()) {
-			if(n.getGroundType().equals("FS")) {
-				counter++;
-			}
-		}
-		return counter;
-	}
 	
-	public int getNumberOfNodes() {
-		return this.getVertices().size();
-	}
 	
 	//main for testing and debugging
 	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
-		System.out.println(g.getIndexesOfMovingBoxesNodes());
-		System.out.println(g.getNumberOfFreeSpaceNodes());
-		System.out.println(g.getNumberOfNodes());
+		//g.writeToFile();
+		System.out.println(g.getVertices());
 	}
 	
 	
