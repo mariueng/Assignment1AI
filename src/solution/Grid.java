@@ -277,16 +277,7 @@ public class Grid {
         return this.getVertices().size();
     }
    
-	
-	
-	
-	//main for testing and debugging
-	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		//g.writeToFile();
-		System.out.println(g.getVertices());
-	}
-	
+
 	
 
 }

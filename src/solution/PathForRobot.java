@@ -1,13 +1,9 @@
 package solution;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import problem.ProblemSpec;
 
 public class PathForRobot {
 	
@@ -162,16 +158,6 @@ public class PathForRobot {
 		return d;
 	}
 
-	//write path to file
-	public void writeToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\mariu\\git\\Assignment1AI\\src\\solution\\robotPathData.txt");
-		BufferedWriter writer = new BufferedWriter(file);
-		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
-		for(Node n:robotPath) {
-			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
-		}
-		writer.close();
-	}
 	
 	//getPath
 	public ArrayList<Node> getRobotPath(){
@@ -183,15 +169,4 @@ public class PathForRobot {
 	}
 	
 	
-	
-	//main for testing
-	public static void main(String[] args) throws IOException {
-//		Grid g = new Grid();
-//		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-//		ArrayList path = pf.getPathForAllMovingBoxes().get(1);
-//		ArrayList path = 
-//		PathForRobot p = new PathForRobot(0.8, 0.75, path , g);
-//		//System.out.println(p.robotPath);
-	}
-
 }

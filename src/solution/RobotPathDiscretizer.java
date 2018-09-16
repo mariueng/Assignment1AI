@@ -1,12 +1,7 @@
 package solution;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-
-import problem.ProblemSpec;
+import java.util.ArrayList;
 
 public class RobotPathDiscretizer {
 	
@@ -102,17 +97,6 @@ public class RobotPathDiscretizer {
 		return discretePathForRobot;
 	}
 	
-	
-	//main for testing
-	public static void main(String[] args) throws IOException {
-//		Grid g = new Grid();
-//		PathForAllMovingBoxes pf = new PathForAllMovingBoxes(g);
-//		ArrayList<Node> path = pf.getPathForAllMovingBoxes().get(0);
-//		PathForRobot p = new PathForRobot(0.1, 0.5, path, g);
-//		//System.out.println(p.getRobotPath());
-//		ArrayList<Node> nodePath= p.getRobotPath();
-//		RobotPathDiscretizer d = new RobotPathDiscretizer(nodePath);
-//		//System.out.println(d.getDiscretPathsForMovingBoxes());
-	}
+
 
 }

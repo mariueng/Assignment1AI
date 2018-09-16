@@ -8,8 +8,8 @@
 	
 	public class PathFinder {
 		
-		//class for finding a path from one initial node to a goal node. Will be used to find path for every Moving Box
-		//pastebin: https://pastebin.com/Zb5hx7JK
+		//class for finding a path from one initial node to a goal node. Will be used to find path for every Moving Box and robot heading for next box
+
 		
 		//fields
 		private Node goalNode;
@@ -58,7 +58,7 @@
 			}return path;
 		}
 		
-		//method when expanding node
+		//method when expanding node. A* search
 		private void expandNode(Node node) {
 			for(Node neighbor:node.getNeighbours()) {
 				if(!(neighbor == null) && neighbor.getGroundType().equals("FS")) {

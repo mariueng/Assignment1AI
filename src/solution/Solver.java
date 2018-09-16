@@ -35,15 +35,11 @@ public class Solver {
 	private int numberOfStaticObstacles;
 	
 	private static ArrayList<PathForRobot> pathsForRobotBeforeMovingBox = new ArrayList<>();
-	// add last orientation for robot to use for next path
-	public ArrayList<Double> initialRotationValue = new ArrayList<>();
-	
-	// add last position of robot to use as initial in next path
-	
-	private ArrayList<ArrayList<Double>> outPut = new ArrayList<ArrayList<Double>>();
+	public ArrayList<Double> initialRotationValue = new ArrayList<>(); // add last orientation for robot to use for next path
+	private ArrayList<ArrayList<Double>> outPut = new ArrayList<ArrayList<Double>>(); // add last position of robot to use as initial in next path
 	
 	//constructor
-	public Solver(ProblemSpec ps) throws IOException {
+	public Solver(ProblemSpec ps, String outputFileName) throws IOException {
 		this.ps = ps;
         w = ps.getRobotWidth();
         this.movingBoxes = ps.getMovingBoxes();
@@ -59,7 +55,7 @@ public class Solver {
         
         //run
 		run();
-		writeSolutionToFile(); //add outputFileName
+		writeSolutionToFile(outputFileName); //add outputFileName
 	}
 	
 	/**
@@ -98,26 +94,11 @@ public class Solver {
 			moveRobotAndBox(i, discMovingBoxPath);
 			goBackBeforGettingNewBox(discMovingBoxPath);
 			
-			//change nodes who was MB to FS and vice versa
-			Point2D startPoint = movingBoxes.get(i).getPos();
-			Point2D endPoint = ps.getMovingBoxEndPositions().get(i);
 			changeGroundTypeForOldMB(i);
 			changeGroundTypeForNewMB(i);
 			}
 		}
-		//iterate over each box and add each steps to outputList
-		/*
-		 *  For each moving box do:
-		 *  1. find discrete path for box to goal
-		 *  2. find (discrete) orientation for robot to align to next box to move
-		 *  3. find path from robot pos to box (special case initial)
-		 *  5. discretize robotpath 
-		 *  6. make an ArrayList<Double> of the given state and writeToFile ????
-		 *  7. fill next lists with values from the last line of outputfile
-		 *  	this is done so that the last value in the last move corresponds
-		 *  	with the first move in the next path.
-		 *  8. Update board with the changed nodes (MB to FS and vice versa)
-		 */
+
 
 
 	//make first step (initial condition of board)
@@ -141,6 +122,7 @@ public class Solver {
 		outPut.add(result);
 	}
 	
+	
 	//method for changing ground types for nodes that lies within the area of the moving box before search
 	private void changeGroundTypeForOldMB(int i) {
 		double x = ps.getMovingBoxes().get(i).getPos().getX()-w/2;
@@ -158,6 +140,7 @@ public class Solver {
 			}
 		}
 	}
+	
 	//change groundtype for nodes that lies within the final position of the moving box
 	private void changeGroundTypeForNewMB(int i) {
 		double x = ps.getMovingBoxEndPositions().get(i).getX();
@@ -222,6 +205,7 @@ public class Solver {
 			outPut.add(resultStep);
 		}
 	}
+	
 	
 	/**
 	 * Move robot to box
@@ -352,11 +336,12 @@ public class Solver {
 	 * writeSolutionToFile
 	 */
 	
-	public void writeSolutionToFile() throws IOException { //Add outputFileName
+	public void writeSolutionToFile(String output) throws IOException { //Add outputFileName
 		//absolute path 
 		String path = new File("").getAbsolutePath();
-		//String output = path "\"+outputFileName
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\output3.txt");
+		String outputFile =""; 
+		outputFile = outputFile +path+ "\"" + output;
+		FileWriter file = new FileWriter(outputFile);
 		int numberOfPrimitiveSteps = outPut.size();
 		BufferedWriter writer = new BufferedWriter(file);
 		writer.write(numberOfPrimitiveSteps + "\n");
@@ -377,10 +362,6 @@ public class Solver {
 		return ps;
 	}
 	
-//	// Retrieving discrete paths for robot outside this class
-//	public static ArrayList<ArrayList<Point2D>> getDiscPathsForRobotBeforeMovingBox() {
-//		return resultMoveRobotForNextBox;
-//	}
 	
 	
 	//formatter for making pretty numbers
@@ -399,25 +380,9 @@ public class Solver {
 	public Grid getGrid() {
 		return grid;
 	}
+
 	
-	/**main for testing
-	 * @throws IOException 
-	 * 
-	 */
-	
-	public static void main(String[] args) throws IOException {
-		ProblemSpec ps = new ProblemSpec();
-		try {
-            ps.loadProblem("input1.txt");
-            Solver s = new Solver(ps);
-            ps.loadSolution("output1.txt");
-        } catch (IOException e) {
-            System.out.println("IO Exception occured");
-        }
-        System.out.println("Finished loading!");
-		Solver solver = new Solver(ps);
-		
-	}
+
 	
 	
 	

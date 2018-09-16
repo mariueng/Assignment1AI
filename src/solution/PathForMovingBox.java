@@ -11,7 +11,7 @@ import problem.Box;
 import problem.ProblemSpec;
  public class PathForMovingBox {
 	
-	//Class for making a path for a given box
+	//Class for making a path of nodes for a given moving box
 	
 	//fields
 	private Node initialNode;
@@ -38,7 +38,8 @@ import problem.ProblemSpec;
 		/*
 		 * METHODS
 		 */
-
+ 	
+ 	//remove duplicates if they occur in the final node list
  	public void removeDuplicates() {
  		int size = path.size()-1;
  		for(int i = size; i>0;i--) {
@@ -116,21 +117,7 @@ import problem.ProblemSpec;
 	}
 	
 	
-	//write path to file
-	public void writeToFile() throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
-		BufferedWriter writer = new BufferedWriter(file);
-		writer.write("X-value" + "\t" +"Y-value" + "\t" + "Ground type" + "\n");
-		for(Node n:path) {
-			writer.write(n.getxValue() + "\t" + n.getyValue() + "\t" + n.getGroundType()+"\n");
-		}
-		writer.close();
-	}
-	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		PathForMovingBox p = new PathForMovingBox(g.getPS().getMovingBoxes().get(0), g);
-		System.out.println(p.path);
-	}
+
 	
 
  }

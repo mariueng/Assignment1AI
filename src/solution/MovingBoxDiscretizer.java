@@ -1,15 +1,7 @@
 package solution;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
-
-
-import problem.ProblemSpec;
+import java.util.ArrayList;
 
 public class MovingBoxDiscretizer {
 	
@@ -103,23 +95,6 @@ public class MovingBoxDiscretizer {
 		return discretePathForMovingBox;
 	}
 	
-	//write path
-	public void writeToFile(int i) throws IOException {
-		FileWriter file = new FileWriter("C:\\Users\\jakob\\git\\Assignment1AI\\src\\solution\\pathData.txt");
-		BufferedWriter writer = new BufferedWriter(file);
-		writer.write("X-value" + "\t" +"Y-value" + "\n");
-		for (Point2D point : discretePathForMovingBox) {
-			writer.write(point.getX() + "\t" + point.getY()+"\n");
-		}
-		writer.close();
-	}
-	
-	//constructor for testing
-	public static void main(String[] args) throws IOException {
-		Grid grid = new Grid();
-		PathForMovingBox p = new PathForMovingBox(grid.getPS().getMovingBoxes().get(0), grid);
-		System.out.println(p.getPathForMovingBox());
-		MovingBoxDiscretizer d = new MovingBoxDiscretizer(p.getPathForMovingBox());
-	}
+
 
 }

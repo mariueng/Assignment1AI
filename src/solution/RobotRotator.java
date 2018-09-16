@@ -43,11 +43,6 @@ public class RobotRotator {
 		return resultList;
 	}
 	
-	//main for testing
-	public static void main(String[] args) {
-		RobotRotator r = new RobotRotator(0.1, 'f');
-		System.out.println(r.getOrientationList());
-		System.out.println(r.getOrientationList().size());
-	}
+
 
 }

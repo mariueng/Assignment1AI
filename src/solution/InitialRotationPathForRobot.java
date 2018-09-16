@@ -58,13 +58,6 @@ public class InitialRotationPathForRobot {
 		return resultList;
 	}
 	
-	//main for testing
-	public static void main(String[] args) throws IOException {
-		Grid g = new Grid();
-		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS().getMovingBoxes().get(0), 0.2,0);
-		System.out.println(i.getResultList());
-	}
-	
 	
 	
 
