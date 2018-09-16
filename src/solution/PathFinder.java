@@ -71,7 +71,6 @@
 				}
 				else {
 					if(neighbor == goalNode) {
-						System.out.println("SUCCESS");
 						isFinished = true;
 						neighbor.setParent(node);
 						this.path = addParentNodesInPath(neighbor);

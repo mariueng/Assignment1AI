@@ -74,7 +74,6 @@ public class Solver {
 		InitialRotationPathForRobot robotRotation; //robot rotation before staring its path to the box
 		
 		for (int i = 0; i < numberOfMovingBoxes; i++) {
-			System.out.println("Box number: " + i);
 			int indexOFLastStep = outPut.size()-1; //the index value of the last step we took moving the previous box
 			currentBoxToMove = movingBoxes.get(i);
 			pathForMovingBox = new PathForMovingBox(currentBoxToMove, grid);
@@ -87,7 +86,7 @@ public class Solver {
 			ArrayList<Node> robotPathNodes = pathForRobot.getRobotPath();
 			discPathForRobot = new RobotPathDiscretizer(robotPathNodes);
 			double initOrientationValue = outPut.get(indexOFLastStep).get(2);
-			robotRotation = new InitialRotationPathForRobot(currentBoxToMove, initOrientationValue);
+			robotRotation = new InitialRotationPathForRobot(currentBoxToMove, initOrientationValue, i);
 			
 			
 			orientRobot(robotRotation);
@@ -144,17 +143,13 @@ public class Solver {
 		double y = ps.getMovingBoxes().get(i).getPos().getY()-w/2;
 		x = doubleFormatter(x);
 		y = doubleFormatter(y);
-		System.out.println("X: " + x);
-		System.out.println("Y: " + y);
 		Rectangle2D.Double r = new Rectangle2D.Double(x,y,2*w+0.01, 2*w+0.01); //fake rectangle around end position
-		System.out.println("Square around box nr. "+ i + ": " + r);
 		for(Node n : grid.getVerticesInMovingBoxes()) {
 			Point2D node = new Point2D.Double(n.getxValue(), n.getyValue());
 			if(r.contains(node)) {
 				boolean markedLater = n.getisMarkedMBBySomeLaterMovingBox(i, ps);
 				if(!(markedLater)) {
 					n.setGroundType("FS");
-					System.out.println(n);
 				}
 			}
 		}
@@ -360,7 +355,7 @@ public class Solver {
 		writer.write(numberOfPrimitiveSteps + "\n");
 		for(ArrayList<Double> step : outPut ) {
 			for(Double value : step) {
-				writer.write(value + "\t");
+				writer.write(value + " ");
 			}
 			writer.write("\n");
 		}

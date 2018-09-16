@@ -122,7 +122,6 @@ public class Node implements Comparable<Node> {
 			MovingBox MB =(MovingBox) ps.getMovingBoxes().get(j);
 			if(r.intersects(MB.getRect())) {
 				result = true;
-				System.out.println("Marked by MB later: " + this);
 			}
 		}
 		return result;

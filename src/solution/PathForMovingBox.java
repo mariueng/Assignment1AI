@@ -33,8 +33,6 @@ import problem.ProblemSpec;
 		PathFinder pf = new PathFinder(initialNode, goalNode, grid); //find a path from initial node to goalNode
 		path = pf.findPath();
 		removeDuplicates();
-		System.out.println(path);
-
 	}
 	
 		/*

@@ -21,10 +21,12 @@ public class InitialRotationPathForRobot {
 	private ProblemSpec ps;
 	
 	//constructor
-	public InitialRotationPathForRobot(Box movingBox, double initialRotation) throws IOException {
+	public InitialRotationPathForRobot(Box movingBox, double initialRotation, int i) throws IOException {
+		this.index = i;
 		this.initialRotation = initialRotation;
 		this.goalDirectionOfRobot = getGoalDirectionOfRobot();
 		this.resultList = getPositions();
+	
 	}
 	
 	//methods
@@ -46,7 +48,6 @@ public class InitialRotationPathForRobot {
 	
 	private char getGoalDirectionOfRobot() throws IOException {
 		PathForRobot p = (PathForRobot) Solver.getPathsForRobotBeforeMovingBox().get(index);
-		
 		return p.getDirectionOfRobot();
 	}
 	
@@ -60,7 +61,7 @@ public class InitialRotationPathForRobot {
 	//main for testing
 	public static void main(String[] args) throws IOException {
 		Grid g = new Grid();
-		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS().getMovingBoxes().get(0), 0.2);
+		InitialRotationPathForRobot i = new InitialRotationPathForRobot(g.getPS().getMovingBoxes().get(0), 0.2,0);
 		System.out.println(i.getResultList());
 	}
 	
